@@ -1,6 +1,6 @@
 services:
   webserver:
-    image: ghcr.io/ophelios-studio/docker-pulsar-php84:latest
+    image: ghcr.io/zephyrus-framework/php:8.4-dev
     container_name: "leaf_webserver"
     restart: 'always'
     ports:
