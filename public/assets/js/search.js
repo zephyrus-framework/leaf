@@ -151,7 +151,7 @@
         results.forEach(function (entry) {
             var sectionLabel = entry.section.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
             html +=
-                '<a href="' + entry.url + '" class="search-result-item">' +
+                '<a href="' + entry.url.replace(/\/?$/, '/') + '" class="search-result-item">' +
                 '<div class="search-result-title">' + highlight(entry.title, query) + '</div>' +
                 '<div class="search-result-section">' + sectionLabel + '</div>' +
                 '<div class="search-result-excerpt">' + highlight(truncate(entry.excerpt, 120), query) + '</div>' +

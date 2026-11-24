@@ -40,6 +40,11 @@
         return new URL(baseUrl, window.location.origin).pathname.replace(/\/+$/, '');
     }
 
+    // Pages are built as <path>/index.html: a link without the slash costs a redirect on a static host.
+    function withTrailingSlash(path) {
+        return /\/$|\.[a-z0-9]+$/i.test(path) ? path : path + '/';
+    }
+
     // Rewrite option hrefs so switching keeps the user on the current page
     // (stripped of the base path and any locale prefix) rather than sending them back to root.
     document.addEventListener('DOMContentLoaded', function () {
@@ -74,7 +79,7 @@
         host.querySelectorAll('.lang-switcher-option').forEach(function (a) {
             var loc = a.getAttribute('data-locale');
             if (!loc) return;
-            a.href = basePath + (loc === defaultLocale ? '' : '/' + loc) + stripped;
+            a.href = basePath + (loc === defaultLocale ? '' : '/' + loc) + withTrailingSlash(stripped);
         });
     });
 })();

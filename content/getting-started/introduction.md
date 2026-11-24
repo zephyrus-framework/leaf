@@ -89,7 +89,7 @@ console.log(multiply(3, 4));
 
 Reference commands inline with backticks: `leaf build`, `leaf dev`, `leaf init`.
 
-Links work with relative paths: see the [page anatomy guide](/getting-started/writing-content) for how to structure a page.
+Links work with relative paths: see the [page anatomy guide](/getting-started/writing-content/) for how to structure a page.
 
 ## Next steps
 
@@ -99,4 +99,4 @@ Links work with relative paths: see the [page anatomy guide](/getting-started/wr
 4. Run `leaf build` to produce the deployable site in `dist/`.
 5. Push `dist/` to any static host: Netlify, Vercel, GitHub Pages, Cloudflare Pages, or your own server.
 
-When you're ready for more, check [Writing Content](/getting-started/writing-content) and [Deployment](/getting-started/deployment).
+When you're ready for more, check [Writing Content](/getting-started/writing-content/) and [Deployment](/getting-started/deployment/).

@@ -76,7 +76,7 @@ Alignment with colons:
 
 ## Links
 
-- **Internal:** `[Installation](/getting-started/installation)` — leading slash, no `.md` extension.
+- **Internal:** `[Installation](/getting-started/installation/)`: leading and trailing slash, no `.md` extension.
 - **External:** `[GitHub](https://github.com)` — rendered with a subtle icon when the `target` is `_blank`.
 
 ## Images

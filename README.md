@@ -99,7 +99,7 @@ The order in the YAML file determines the sidebar order. Create a matching direc
 Link between pages using absolute paths:
 
 ```markdown
-See the [Installation](/getting-started/installation) guide.
+See the [Installation](/getting-started/installation/) guide.
 ```
 
 ## Configuration
