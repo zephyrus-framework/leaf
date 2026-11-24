@@ -34,10 +34,15 @@
         if (e.key === 'Escape') closeAll();
     });
 
+    // A host that merges slashes serves "//page/": a link starting with "//" would leave the site.
+    function collapseSlashes(path) {
+        return path.replace(/\/{2,}/g, '/');
+    }
+
     // Path of the configured base URL, which may be absolute: "https://example.com/docs/" gives "/docs".
     function basePathOf(baseUrl) {
         if (!baseUrl) return '';
-        return new URL(baseUrl, window.location.origin).pathname.replace(/\/+$/, '');
+        return collapseSlashes(new URL(baseUrl, window.location.origin).pathname).replace(/\/+$/, '');
     }
 
     // Pages are built as <path>/index.html: a link without the slash costs a redirect on a static host.
@@ -56,7 +61,7 @@
         );
         var defaultLocale = host.getAttribute('data-default') || '';
         var basePath = basePathOf(host.getAttribute('data-base-url') || '');
-        var path = window.location.pathname || '/';
+        var path = collapseSlashes(window.location.pathname || '/');
         if (basePath !== '' && (path === basePath || path.indexOf(basePath + '/') === 0)) {
             path = path.slice(basePath.length) || '/';
         }
