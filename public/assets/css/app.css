@@ -88,10 +88,16 @@ html.theme-transition *::after {
     background: var(--bg-surface) !important;
 }
 [data-theme="light"] .token.comment,
+[data-theme="light"] .token.block-comment,
 [data-theme="light"] .token.prolog,
 [data-theme="light"] .token.doctype,
-[data-theme="light"] .token.cdata { color: #6e7781; }
+[data-theme="light"] .token.cdata { color: #5f6872; }
 [data-theme="light"] .token.punctuation { color: #24292f; }
+[data-theme="light"] .token.attr-name,
+[data-theme="light"] .token.namespace,
+[data-theme="light"] .token.deleted { color: #b75358; }
+[data-theme="light"] .token.function-name { color: #3a77aa; }
+[data-theme="light"] .token.inserted { color: #008000; }
 [data-theme="light"] .token.property,
 [data-theme="light"] .token.tag,
 [data-theme="light"] .token.boolean,
@@ -121,10 +127,16 @@ html.theme-transition *::after {
         background: var(--bg-surface) !important;
     }
     :root:not([data-theme="dark"]) .token.comment,
+    :root:not([data-theme="dark"]) .token.block-comment,
     :root:not([data-theme="dark"]) .token.prolog,
     :root:not([data-theme="dark"]) .token.doctype,
-    :root:not([data-theme="dark"]) .token.cdata { color: #6e7781; }
+    :root:not([data-theme="dark"]) .token.cdata { color: #5f6872; }
     :root:not([data-theme="dark"]) .token.punctuation { color: #24292f; }
+    :root:not([data-theme="dark"]) .token.attr-name,
+    :root:not([data-theme="dark"]) .token.namespace,
+    :root:not([data-theme="dark"]) .token.deleted { color: #b75358; }
+    :root:not([data-theme="dark"]) .token.function-name { color: #3a77aa; }
+    :root:not([data-theme="dark"]) .token.inserted { color: #008000; }
     :root:not([data-theme="dark"]) .token.property,
     :root:not([data-theme="dark"]) .token.tag,
     :root:not([data-theme="dark"]) .token.boolean,
@@ -214,6 +226,7 @@ code[class*="language-"] {
     background: var(--bg-surface) !important;
     text-shadow: none !important;
 }
+.token.inserted { color: #298f17; }
 
 /* ── Utility Overrides (works alongside Tailwind CDN) ──── */
 .bg-deep { background-color: var(--bg-deep); }
