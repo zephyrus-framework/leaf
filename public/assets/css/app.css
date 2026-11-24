@@ -171,7 +171,7 @@ a {
     text-decoration: none;
     transition: color 0.15s ease;
 }
-a:hover { color: var(--accent); }
+a:hover { color: var(--accent-light); }
 
 code, pre, kbd {
     font-family: var(--font-mono);
@@ -388,7 +388,7 @@ code[class*="language-"] {
 }
 .lang-switcher-option.is-active {
     background: var(--accent-glow);
-    color: var(--accent);
+    color: var(--accent-light);
 }
 
 /* Theme toggle button */
@@ -417,7 +417,7 @@ code[class*="language-"] {
     padding: 0.15rem 0.5rem;
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--accent);
+    color: var(--accent-light);
     background: var(--accent-glow);
     border: 1px solid var(--border-accent);
     border-radius: 9999px;
@@ -530,7 +530,7 @@ code[class*="language-"] {
     height: 2.5rem;
     border-radius: 0.5rem;
     background: var(--accent-glow);
-    color: var(--accent);
+    color: var(--accent-light);
     margin-bottom: 1rem;
     font-size: 1.25rem;
 }
@@ -741,11 +741,11 @@ code[class*="language-"] {
     color: var(--text-muted);
 }
 .sidebar-powered a {
-    color: var(--accent);
+    color: var(--accent-light);
     font-weight: 500;
 }
 .sidebar-powered a:hover {
-    color: var(--accent-light);
+    color: var(--text-bright);
 }
 
 /* ── Docs Main Content ────────────────────────────────────── */
