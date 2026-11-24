@@ -1,9 +1,0 @@
-services:
-  webserver:
-    image: ghcr.io/zephyrus-framework/php:8.4-dev
-    container_name: "leaf_webserver"
-    restart: 'always'
-    ports:
-      - "8080:80"
-    volumes:
-      - ./:/var/www/html
