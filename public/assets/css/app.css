@@ -974,19 +974,16 @@ code[class*="language-"] {
 
 /* Heading permalink */
 .heading-permalink {
-    color: var(--accent);
+    color: var(--text-muted);
     font-weight: 400;
     margin-right: 0.5rem;
-    opacity: 0.5;
-    transition: opacity 0.15s ease;
+    transition: color 0.15s ease;
     font-size: 0.85em;
 }
 .prose h2:hover .heading-permalink,
 .prose h3:hover .heading-permalink,
-.prose h4:hover .heading-permalink {
-    opacity: 1;
-}
-.heading-permalink:hover {
+.prose h4:hover .heading-permalink,
+.heading-permalink:focus {
     color: var(--accent-light);
 }
 
