@@ -35,7 +35,8 @@
     "license": "Licence {license}"
   },
   "landing": {
-    "read_docs": "Lire la documentation"
+    "read_docs": "Lire la documentation",
+    "empty": "Aucune page pour l’instant. Écrivez la première en Markdown, par exemple\u00a0:"
   },
   "not_found": {
     "title": "Page introuvable",

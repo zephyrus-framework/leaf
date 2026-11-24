@@ -35,7 +35,8 @@
     "license": "{license} License"
   },
   "landing": {
-    "read_docs": "Read the Docs"
+    "read_docs": "Read the Docs",
+    "empty": "No pages yet. Write the first one in Markdown, for example:"
   },
   "not_found": {
     "title": "Page not found",

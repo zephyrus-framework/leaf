@@ -20,6 +20,10 @@
                     GitHub
                 </a>
             </div>
+            <p n:if="!($firstPage ?? null)" class="text-base text-body max-w-2xl mx-auto animate-fade-in" style="animation-delay: 200ms">
+                {localize('landing.empty')}
+                <code class="block w-fit mx-auto mt-3 font-mono text-sm text-bright bg-elevated border border-border rounded px-2 py-1">content/<wbr>getting-started/<wbr>introduction.md</code>
+            </p>
         </div>
     </section>
 </main>
