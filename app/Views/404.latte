@@ -1,5 +1,6 @@
 {layout 'layouts/landing.latte'}
 {var $title = localize('not_found.title')}
+{var $notFound = true}
 
 {block head}
 <style>
@@ -10,6 +11,9 @@
     .error-links { margin-top: 2rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
     .error-link-primary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--accent); color: white; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; text-decoration: none; transition: background 0.15s; }
     .error-link-primary:hover { background: var(--accent-light); }
+    .error-locales { margin-top: 1.25rem; display: flex; justify-content: center; gap: 0.5rem 1.25rem; flex-wrap: wrap; font-size: 0.875rem; }
+    .error-locales a { color: var(--accent-light); text-decoration: underline; text-underline-offset: 0.2em; }
+    .error-locales a:hover { color: var(--text-bright); }
     .error-link-secondary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; border: 1px solid var(--border); color: var(--text); border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; text-decoration: none; transition: border-color 0.15s, color 0.15s; }
     .error-link-secondary:hover { border-color: var(--border-accent); color: var(--text-bright); }
 </style>
@@ -24,6 +28,11 @@
         <div class="error-links">
             <a href="{$leafBaseUrl}{$localePrefix}/" class="error-link-primary">{localize('not_found.home')}</a>
         </div>
+        <nav n:if="count($supportedLocales) > 1" class="error-locales" aria-label="{localize('not_found.other_languages')}">
+            {foreach $supportedLocales as $loc}
+            <a n:if="$loc !== $currentLocale" href="{$leafBaseUrl}{$loc === $defaultLocale ? '' : '/' . $loc}/" hreflang="{$loc}" lang="{$loc}">{\Locale::getDisplayLanguage($loc, $loc)|firstUpper}</a>
+            {/foreach}
+        </nav>
     </div>
 </div>
 {/block}

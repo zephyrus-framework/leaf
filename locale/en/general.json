@@ -40,6 +40,7 @@
   "not_found": {
     "title": "Page not found",
     "message": "The page you're looking for doesn't exist or has been moved. Maybe it was blown away by a gentle breeze.",
-    "home": "Documentation"
+    "home": "Documentation",
+    "other_languages": "Other languages"
   }
 }

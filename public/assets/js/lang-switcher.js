@@ -49,7 +49,7 @@
     // (stripped of the base path and any locale prefix) rather than sending them back to root.
     document.addEventListener('DOMContentLoaded', function () {
         var host = document.querySelector('.lang-switcher');
-        if (!host) return;
+        if (!host || host.getAttribute('data-locale-homes') === 'true') return;
         var supported = Array.prototype.map.call(
             host.querySelectorAll('.lang-switcher-option'),
             function (a) { return a.getAttribute('data-locale'); },

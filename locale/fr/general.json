@@ -40,6 +40,7 @@
   "not_found": {
     "title": "Page introuvable",
     "message": "La page que vous cherchez n’existe pas ou a été déplacée. Une douce brise l’a peut-être emportée.",
-    "home": "Documentation"
+    "home": "Documentation",
+    "other_languages": "Autres langues"
   }
 }
