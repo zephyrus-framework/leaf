@@ -144,6 +144,8 @@ The design system is defined as CSS custom properties in `public/assets/css/app.
 | `--bg-elevated` | `#1a1a27` | Hover states |
 | `--accent` | `#8b5cf6` | Primary accent (violet) |
 | `--accent-light` | `#a78bfa` | Hover accent |
+| `--accent-fill` | `#7c3aed` | Filled button background, under white text |
+| `--accent-fill-hover` | `#6d28d9` | Filled button hover |
 | `--text` | `#d4d4d8` | Body text |
 | `--text-bright` | `#fafafa` | Headings |
 | `--font-body` | Inter | Body font |
