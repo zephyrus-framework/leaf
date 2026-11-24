@@ -26,12 +26,17 @@
         });
     }
 
-    // Close on outside click or Escape.
+    // Close on outside click or Escape; Escape from inside an open menu returns focus to its button.
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.lang-switcher')) closeAll();
     });
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeAll();
+        if (e.key !== 'Escape') return;
+        var focused = document.activeElement;
+        var openHost = focused && focused.closest ? focused.closest('.lang-switcher[data-open="true"]') : null;
+        closeAll();
+        var btn = openHost ? openHost.querySelector('.lang-switcher-button') : null;
+        if (btn) btn.focus();
     });
 
     // A host that merges slashes serves "//page/": a link starting with "//" would leave the site.
