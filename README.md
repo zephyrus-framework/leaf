@@ -150,6 +150,10 @@ The design system is defined as CSS custom properties in `public/assets/css/app.
 | `--font-body` | Inter | Body font |
 | `--font-mono` | JetBrains Mono | Code font |
 
+### Interface Text and Languages
+
+The theme's labels (search, pagination, table of contents, 404 page) are read with `{localize('search.placeholder')}` from `locale/en/general.json`, and `locale/fr/general.json` carries their French translation. To publish a French version, add `fr` to `localization.supported_locales` in `config.yml` and put the translated pages under `content/fr/`.
+
 ### Syntax Highlighting
 
 Additional Prism.js languages can be added in `app/Views/layouts/docs.latte`:

@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "menu": "Afficher ou masquer le menu",
+    "search": "Rechercher",
+    "theme": "Changer de thème",
+    "theme_to_light": "Passer au thème clair",
+    "theme_to_dark": "Passer au thème sombre"
+  },
+  "search": {
+    "label": "Rechercher dans la documentation",
+    "placeholder": "Rechercher dans la documentation…",
+    "escape": "Échap",
+    "enter": "Entrée",
+    "empty": "Tapez quelques lettres pour chercher dans la documentation…",
+    "no_results": "Aucun résultat pour « {query} »",
+    "to_navigate": "pour naviguer",
+    "to_select": "pour ouvrir"
+  },
+  "toc": {
+    "title": "Sur cette page"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "code": {
+    "copy": "Copier le code",
+    "copy_label": "Copier le code dans le presse-papiers"
+  },
+  "sidebar": {
+    "powered_by": "Propulsé par"
+  },
+  "footer": {
+    "built_by": "Réalisé par",
+    "license": "Licence {license}"
+  },
+  "landing": {
+    "read_docs": "Lire la documentation"
+  },
+  "not_found": {
+    "title": "Page introuvable",
+    "message": "La page que vous cherchez n’existe pas ou a été déplacée. Une douce brise l’a peut-être emportée.",
+    "home": "Documentation"
+  }
+}

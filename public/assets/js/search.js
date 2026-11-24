@@ -11,6 +11,8 @@
     var input = document.getElementById('search-input');
     var resultsContainer = document.getElementById('search-results');
     var searchIndex = null;
+    var emptyLabel = resultsContainer ? resultsContainer.getAttribute('data-empty') || 'Type to search the documentation...' : '';
+    var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
     var activeIndex = -1;
 
     if (!overlay || !input || !resultsContainer) return;
@@ -135,7 +137,7 @@
     function renderEmpty() {
         activeIndex = -1;
         resultsContainer.innerHTML =
-            '<div class="search-empty">Type to search the documentation...</div>';
+            '<div class="search-empty">' + escapeHtml(emptyLabel) + '</div>';
     }
 
     function renderResults(results, query) {
@@ -143,7 +145,7 @@
 
         if (results.length === 0) {
             resultsContainer.innerHTML =
-                '<div class="search-empty">No results found for "' + escapeHtml(query) + '"</div>';
+                '<div class="search-empty">' + escapeHtml(noResultsLabel).replace('{query}', function () { return escapeHtml(query); }) + '</div>';
             return;
         }
 

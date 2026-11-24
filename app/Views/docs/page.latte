@@ -9,7 +9,7 @@
     <nav class="docs-pagination" n:if="$prevPage || $nextPage">
         {if $prevPage}
         <a href="{$leafBaseUrl}{$localePrefix}/{$prevPage['section']}/{$prevPage['slug']}/" class="pagination-link pagination-prev">
-            <span class="pagination-label">&larr; Previous</span>
+            <span class="pagination-label">&larr; {localize('pagination.previous')}</span>
             <span class="pagination-title">{$prevPage['title']}</span>
         </a>
         {else}
@@ -18,7 +18,7 @@
 
         {if $nextPage}
         <a href="{$leafBaseUrl}{$localePrefix}/{$nextPage['section']}/{$nextPage['slug']}/" class="pagination-link pagination-next">
-            <span class="pagination-label">Next &rarr;</span>
+            <span class="pagination-label">{localize('pagination.next')} &rarr;</span>
             <span class="pagination-title">{$nextPage['title']}</span>
         </a>
         {/if}
