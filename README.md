@@ -8,7 +8,7 @@ A static documentation site generator powered by [Zephyrus](https://github.com/z
 - **Automatic navigation** -- Sidebar and table of contents generated from your content structure
 - **Full-text search** -- Client-side fuzzy search across all pages, no server required
 - **Syntax highlighting** -- Prism.js with support for PHP, JavaScript, TypeScript, Bash, YAML, JSON, SQL, and Solidity
-- **Dark theme** -- Electric violet on deep black. Single theme, no toggle needed
+- **Light and dark themes** -- Follows the system preference, and the navbar button switches between them and remembers the choice
 - **One-command build** -- `composer build` generates a `dist/` folder ready for GitHub Pages, Netlify, or any static host
 - **Live-reload** -- Edit a file, see changes instantly during development
 - **Mobile responsive** -- Hamburger menu with slide-in sidebar drawer on small screens
@@ -41,6 +41,7 @@ my-docs/
 ├── content/                # Markdown documentation pages
 │   └── getting-started/
 │       └── introduction.md
+├── locale/                 # Interface labels, one folder per locale
 ├── app/
 │   ├── Controllers/        # Route handlers
 │   ├── Models/Core/        # Application bootstrap
@@ -51,10 +52,8 @@ my-docs/
 ├── public/
 │   ├── assets/
 │   │   ├── css/app.css     # Full theme CSS
-│   │   ├── js/             # Copy-code, sidebar, search scripts
-│   │   └── images/         # Your logo and assets
+│   │   └── js/             # Copy-code, sidebar, search scripts
 │   └── index.php
-├── src/                    # Leaf library classes
 ├── bin/
 │   ├── router.php          # Dev server entry point
 │   └── build.php           # Static site builder
@@ -167,7 +166,6 @@ Additional Prism.js languages can be added in `app/Views/layouts/docs.latte`:
 ```bash
 composer dev     # Start dev server with live-reload (localhost:8080)
 composer build   # Generate static HTML to dist/
-composer test    # Run tests
 ```
 
 ## Deployment
