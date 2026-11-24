@@ -34,8 +34,14 @@
         if (e.key === 'Escape') closeAll();
     });
 
+    // Path of the configured base URL, which may be absolute: "https://example.com/docs/" gives "/docs".
+    function basePathOf(baseUrl) {
+        if (!baseUrl) return '';
+        return new URL(baseUrl, window.location.origin).pathname.replace(/\/+$/, '');
+    }
+
     // Rewrite option hrefs so switching keeps the user on the current page
-    // (stripped of any locale prefix) rather than sending them back to root.
+    // (stripped of the base path and any locale prefix) rather than sending them back to root.
     document.addEventListener('DOMContentLoaded', function () {
         var host = document.querySelector('.lang-switcher');
         if (!host) return;
@@ -44,7 +50,11 @@
             function (a) { return a.getAttribute('data-locale'); },
         );
         var defaultLocale = host.getAttribute('data-default') || '';
+        var basePath = basePathOf(host.getAttribute('data-base-url') || '');
         var path = window.location.pathname || '/';
+        if (basePath !== '' && (path === basePath || path.indexOf(basePath + '/') === 0)) {
+            path = path.slice(basePath.length) || '/';
+        }
 
         // Strip a leading /{supportedLocale}/ segment if present.
         var stripped = path;
@@ -64,9 +74,7 @@
         host.querySelectorAll('.lang-switcher-option').forEach(function (a) {
             var loc = a.getAttribute('data-locale');
             if (!loc) return;
-            a.href = (loc === defaultLocale)
-                ? stripped
-                : ('/' + loc + (stripped === '/' ? '/' : stripped));
+            a.href = basePath + (loc === defaultLocale ? '' : '/' + loc) + stripped;
         });
     });
 })();
