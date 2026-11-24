@@ -1,7 +1,6 @@
 {layout '../layouts/docs.latte'}
 
 {block content}
-{var $localePrefix = ($currentLocale ?? 'en') === ($defaultLocale ?? 'en') ? '' : '/' . $currentLocale}
 <article class="docs-content">
     <div class="prose">
         {$content|noescape}
