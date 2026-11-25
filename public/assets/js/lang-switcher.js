@@ -48,8 +48,11 @@
         pressedHost = null;
         if (!e.target.closest('.lang-switcher')) closeAll();
     });
+    // An Escape that closes a menu is consumed, so a layer below it (the docs drawer) stays open.
     document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Escape') return;
+        if (e.key !== 'Escape' || e.defaultPrevented) return;
+        if (!document.querySelector('.lang-switcher[data-open="true"]')) return;
+        e.preventDefault();
         var focused = document.activeElement;
         var openHost = focused && focused.closest ? focused.closest('.lang-switcher[data-open="true"]') : null;
         closeAll();

@@ -116,10 +116,10 @@
         document.body.style.overflow = '';
     };
 
-    // Escape closes the drawer and returns focus to its button, unless the search or a menu above it is open.
+    // Escape closes the drawer and returns focus to its button, unless a layer above it took the key or is still open.
     document.addEventListener('keydown', function (e) {
         var sidebar = document.querySelector('.docs-sidebar');
-        if (e.key !== 'Escape' || !sidebar || !sidebar.classList.contains('active')) return;
+        if (e.key !== 'Escape' || e.defaultPrevented || !sidebar || !sidebar.classList.contains('active')) return;
         if (document.querySelector('.search-overlay.active, .lang-switcher[data-open="true"]')) return;
         closeSidebar();
         if (navToggle) navToggle.focus();
