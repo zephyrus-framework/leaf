@@ -79,6 +79,9 @@
     }
 
     // ── Mobile: nav toggle (hamburger opens sidebar) ───────────
+    var navToggle = document.querySelector('.nav-toggle');
+    if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+
     window.toggleNav = function () {
         var sidebar = document.querySelector('.docs-sidebar');
         var overlay = document.querySelector('.sidebar-overlay');
@@ -90,7 +93,12 @@
             if (overlay) overlay.classList.toggle('active', isActive);
             if (openIcon) openIcon.style.display = isActive ? 'none' : 'block';
             if (closeIcon) closeIcon.style.display = isActive ? 'block' : 'none';
+            if (navToggle) navToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
             document.body.style.overflow = isActive ? 'hidden' : '';
+            if (isActive) {
+                var target = sidebar.querySelector('.sidebar-link.active') || sidebar.querySelector('a[href]');
+                if (target) target.focus();
+            }
         }
     };
 
@@ -104,8 +112,18 @@
         if (overlay) overlay.classList.remove('active');
         if (openIcon) openIcon.style.display = 'block';
         if (closeIcon) closeIcon.style.display = 'none';
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     };
+
+    // Escape closes the drawer and returns focus to its button, unless the search or a menu above it is open.
+    document.addEventListener('keydown', function (e) {
+        var sidebar = document.querySelector('.docs-sidebar');
+        if (e.key !== 'Escape' || !sidebar || !sidebar.classList.contains('active')) return;
+        if (document.querySelector('.search-overlay.active, .lang-switcher[data-open="true"]')) return;
+        closeSidebar();
+        if (navToggle) navToggle.focus();
+    });
 
     // Close sidebar when a link is clicked (mobile)
     document.querySelectorAll('.sidebar-link').forEach(function (link) {
