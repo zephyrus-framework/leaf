@@ -14,11 +14,14 @@
     var emptyLabel = resultsContainer ? resultsContainer.getAttribute('data-empty') || 'Type to search the documentation...' : '';
     var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
     var activeIndex = -1;
+    var returnFocusTo = null;
 
     if (!overlay || !input || !resultsContainer) return;
 
     // ── Public API (called from nav button) ────────────────────
-    window.openSearch = function () {
+    // Closing gives focus back to the opener: the button passed in, or what had focus before the shortcut.
+    window.openSearch = function (opener) {
+        returnFocusTo = opener || document.activeElement;
         overlay.classList.add('active');
         input.value = '';
         input.focus();
@@ -27,8 +30,12 @@
     };
 
     window.closeSearch = function () {
+        if (!overlay.classList.contains('active')) return;
         overlay.classList.remove('active');
         activeIndex = -1;
+        input.blur();
+        if (returnFocusTo) returnFocusTo.focus();
+        returnFocusTo = null;
     };
 
     // ── Keyboard shortcuts ─────────────────────────────────────
