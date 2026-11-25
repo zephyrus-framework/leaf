@@ -95,8 +95,8 @@ html.theme-transition *::after {
 [data-theme="light"] .token.punctuation { color: #24292f; }
 [data-theme="light"] .token.attr-name,
 [data-theme="light"] .token.namespace,
-[data-theme="light"] .token.deleted { color: #b75358; }
-[data-theme="light"] .token.function-name { color: #3a77aa; }
+[data-theme="light"] .token.deleted { color: #ad4c51; }
+[data-theme="light"] .token.function-name { color: #346fa0; }
 [data-theme="light"] .token.inserted { color: #008000; }
 [data-theme="light"] .token.property,
 [data-theme="light"] .token.tag,
@@ -134,8 +134,8 @@ html.theme-transition *::after {
     :root:not([data-theme="dark"]) .token.punctuation { color: #24292f; }
     :root:not([data-theme="dark"]) .token.attr-name,
     :root:not([data-theme="dark"]) .token.namespace,
-    :root:not([data-theme="dark"]) .token.deleted { color: #b75358; }
-    :root:not([data-theme="dark"]) .token.function-name { color: #3a77aa; }
+    :root:not([data-theme="dark"]) .token.deleted { color: #ad4c51; }
+    :root:not([data-theme="dark"]) .token.function-name { color: #346fa0; }
     :root:not([data-theme="dark"]) .token.inserted { color: #008000; }
     :root:not([data-theme="dark"]) .token.property,
     :root:not([data-theme="dark"]) .token.tag,
@@ -226,7 +226,7 @@ code[class*="language-"] {
     background: var(--bg-surface) !important;
     text-shadow: none !important;
 }
-.token.inserted { color: #298f17; }
+.token.inserted { color: #2e9a1b; }
 
 /* ── Utility Overrides (works alongside Tailwind CDN) ──── */
 .bg-deep { background-color: var(--bg-deep); }
