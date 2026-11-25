@@ -875,6 +875,18 @@ code[class*="language-"] {
     font-weight: 600;
 }
 
+/* Specific enough to beat Tailwind's preflight reset of every link, whatever the stylesheet order. */
+.prose a:not(.heading-permalink) {
+    color: var(--accent-light);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+.prose a:not(.heading-permalink):hover {
+    color: var(--text-bright);
+    text-decoration-thickness: 2px;
+}
+
 .prose ul {
     margin: 0 0 1.25rem;
     padding-left: 1.5rem;
