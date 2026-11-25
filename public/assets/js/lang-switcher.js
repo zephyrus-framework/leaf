@@ -16,18 +16,36 @@
         }
     };
 
-    function closeAll() {
-        document.querySelectorAll('.lang-switcher[data-open="true"]').forEach(function (el) {
-            el.setAttribute('data-open', 'false');
-            var menu = el.querySelector('.lang-switcher-menu');
-            var btn = el.querySelector('.lang-switcher-button');
-            if (menu) menu.hidden = true;
-            if (btn) btn.setAttribute('aria-expanded', 'false');
-        });
+    function close(host) {
+        host.setAttribute('data-open', 'false');
+        var menu = host.querySelector('.lang-switcher-menu');
+        var btn = host.querySelector('.lang-switcher-button');
+        if (menu) menu.hidden = true;
+        if (btn) btn.setAttribute('aria-expanded', 'false');
     }
+
+    function closeAll() {
+        document.querySelectorAll('.lang-switcher[data-open="true"]').forEach(close);
+    }
+
+    // Safari does not focus a pressed link or button: a press inside the menu blurs to nothing.
+    var pressedHost = null;
+    document.addEventListener('pointerdown', function (e) {
+        pressedHost = e.target.closest ? e.target.closest('.lang-switcher') : null;
+    }, true);
+
+    // Close when focus leaves an open menu, without moving it.
+    document.addEventListener('focusout', function (e) {
+        var host = e.target.closest ? e.target.closest('.lang-switcher[data-open="true"]') : null;
+        if (!host) return;
+        var next = e.relatedTarget;
+        if (next ? host.contains(next) : pressedHost === host) return;
+        close(host);
+    });
 
     // Close on outside click or Escape; Escape from inside an open menu returns focus to its button.
     document.addEventListener('click', function (e) {
+        pressedHost = null;
         if (!e.target.closest('.lang-switcher')) closeAll();
     });
     document.addEventListener('keydown', function (e) {
