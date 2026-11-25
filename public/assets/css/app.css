@@ -1012,6 +1012,17 @@ code[class*="language-"] {
 .heading-permalink:focus {
     color: var(--accent-light);
 }
+/* In the left gutter on wide screens, on the heading baseline, so the heading text lines up with the body text. */
+@media (min-width: 1025px) {
+    .prose h2 > .heading-permalink,
+    .prose h3 > .heading-permalink,
+    .prose h4 > .heading-permalink {
+        display: inline-block;
+        width: 1.25em;
+        margin-left: -1.25em;
+        margin-right: 0;
+    }
+}
 
 /* Tables */
 .prose table {
