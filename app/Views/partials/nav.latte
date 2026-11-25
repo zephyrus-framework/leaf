@@ -31,14 +31,14 @@
             {var $defaultLoc = $defaultLocale ?? ''}
             {if count($locales) > 1}
             <div class="lang-switcher" data-current="{$currentLoc}" data-default="{$defaultLoc}" data-base-url="{$leafBaseUrl}" data-locale-homes="{$notFound ? 'true' : 'false'}">
-                <button type="button" class="lang-switcher-button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleLangSwitcher(this)">
+                <button type="button" class="lang-switcher-button" aria-expanded="false" aria-controls="lang-switcher-menu" onclick="toggleLangSwitcher(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     <span class="lang-switcher-label">{$currentLoc|upper}</span>
                 </button>
-                <ul class="lang-switcher-menu" role="listbox" hidden>
+                <ul id="lang-switcher-menu" class="lang-switcher-menu" hidden>
                     {foreach $locales as $loc}
-                    <li role="option" aria-selected="{$loc === $currentLoc ? 'true' : 'false'}">
-                        <a class="lang-switcher-option{if $loc === $currentLoc} is-active{/if}" data-locale="{$loc}" href="{$loc === $defaultLoc ? ($leafBaseUrl ?? '') . '/' : ($leafBaseUrl ?? '') . '/' . $loc . '/'}">{$loc|upper}</a>
+                    <li>
+                        <a class="lang-switcher-option{if $loc === $currentLoc} is-active{/if}" n:attr="aria-current: $loc === $currentLoc ? 'true' : null" data-locale="{$loc}" hreflang="{$loc}" lang="{$loc}" href="{$loc === $defaultLoc ? ($leafBaseUrl ?? '') . '/' : ($leafBaseUrl ?? '') . '/' . $loc . '/'}">{$loc|upper}</a>
                     </li>
                     {/foreach}
                 </ul>
