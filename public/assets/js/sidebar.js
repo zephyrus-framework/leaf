@@ -125,6 +125,15 @@
         if (navToggle) navToggle.focus();
     });
 
+    // Focus moving outside the open drawer, its button and the search dialog closes the drawer without moving it back.
+    document.addEventListener('focusout', function (e) {
+        var sidebar = document.querySelector('.docs-sidebar');
+        var next = e.relatedTarget;
+        if (!sidebar || !sidebar.classList.contains('active') || !next || !next.closest) return;
+        if (next.closest('.docs-sidebar, .nav-toggle, .search-overlay')) return;
+        closeSidebar();
+    });
+
     // Close sidebar when a link is clicked (mobile)
     document.querySelectorAll('.sidebar-link').forEach(function (link) {
         link.addEventListener('click', function () {
