@@ -25,6 +25,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - A short landing page keeps its footer at the bottom of the window.
 - Beside a logo, a site name that does not fit is hidden instead of cut, and screen readers still read it. A wide logo scales down instead of being squeezed.
 - The landing hero glow fades out instead of ending on a hard edge.
+- On a narrow screen, the two buttons of the not found page stack at the same width and height.
 - In the search dialog, the first result is preselected, so Enter opens it.
 - The search dialog footer says "Enter to open" in English, as it does in French, instead of "Enter to select".
 - In the search dialog, an accent bar marks the selected result, which its tint alone did not set apart from the others.
@@ -49,6 +50,7 @@ A template, stylesheet or script your site overrides belongs to your site. Take 
 - `partials/search-modal.latte`: `data-loading` and `data-unavailable` on `#search-results`, with the new `search.loading` and `search.unavailable` labels, which a site with its own `locale/` files adds to them.
 - `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script; `integrity` and `crossorigin="anonymous"` on each Prism script.
 - `layouts/docs.latte`: `integrity` and `crossorigin="anonymous"` on each Prism script.
+- `404.latte`: in its `<style>`, `width: fit-content` and `margin: 2rem auto 0` on `.error-links`, the new `.error-links a` rule, and `border: 1px solid transparent` on `.error-link-primary`.
 - `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`, `.search-result-item:hover` taken out of the rule that highlights `.search-result-item.active`, and the new `.prose code:not(pre code, td code, th code)`.
 - `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()` and `selectResult()`, `updateActiveItem()` and the selector of `keepTabInDialog()`; the new `mousemove` listener on the results, which moves the selection; `runQuery()`, the input listener now named; `loadIndex()`, with the new `isSearchableEntry()` and the new `loadingLabel`, `unavailableLabel`, `indexLoading` and `indexFailed` declared at the top.
 
