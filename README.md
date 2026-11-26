@@ -110,6 +110,7 @@ leaf:
   name: "My Project"             # Displayed in the navbar
   version: "1.0.0"               # Version badge in the navbar
   description: "A short tagline" # Used in meta tags
+  logo: ""                       # Header image under public/, e.g. "/assets/images/logo.svg" (empty keeps the default mark)
   github_url: ""                 # GitHub link in the navbar (leave empty to hide)
   content_path: "content"        # Where markdown files live
   sections:                      # Sidebar sections (order matters)
@@ -125,12 +126,28 @@ leaf:
 
 ### Logo
 
-Replace the default SVG icon in `app/Views/partials/nav.latte` with your own logo. For an image logo, use:
+Put the image under `public/` and point `leaf.logo` at it in `config.yml`, with a path that starts with a single `/`:
 
-```html
-<a href="/" class="nav-logo">
-    <img src="/assets/images/your-logo.svg" alt="My Project" class="nav-logo-img">
-</a>
+```yaml
+leaf:
+  logo: "/assets/images/logo.svg"
+```
+
+The header shows it next to the site name, in place of the default mark, and prefixes it with `base_url`. An empty string keeps the default mark; any other value (a relative path, a full URL, `//`) stops the build with a message that says what is accepted.
+
+### Custom Pages
+
+A Latte template at `app/Views/pages/{name}.latte` is built to `/{name}/`. Give its `<main>` the id `main-content`, the target of the theme's "Skip to content" link:
+
+```latte
+{layout '../layouts/landing.latte'}
+
+{block content}
+<main id="main-content" tabindex="-1" class="max-w-3xl mx-auto px-6 pt-28 pb-16">
+    <h1 class="text-3xl font-bold text-bright">About</h1>
+    <p>A custom page.</p>
+</main>
+{/block}
 ```
 
 ### Theme
@@ -180,7 +197,7 @@ After running `composer build`, the `dist/` directory contains a fully self-cont
 
 **Manual** -- Upload the contents of `dist/` to any web server.
 
-The build also generates a `404.html` at the root of `dist/` for GitHub Pages compatibility.
+The build also generates a `404.html` at the root of `dist/`, and one per additional locale (`dist/fr/404.html`). GitHub Pages only ever serves the root one, so on a multilingual site its script sends a missing `/fr/...` address to `fr/404.html`; hosts that already serve the nearest `404.html` (the dev server, Cloudflare Pages) show the right language directly. Without JavaScript, the root page links to the other languages.
 
 ## License
 

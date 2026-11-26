@@ -94,7 +94,7 @@ Links work with relative paths: see the [page anatomy guide](/getting-started/wr
 ## Next steps
 
 1. Edit `config.yml` — set your project name, version, author, GitHub URL.
-2. Drop your logo into `public/assets/images/` and reference it in your templates.
+2. Drop your logo into `public/assets/images/` and set `logo: "/assets/images/logo.svg"` under `leaf:` in `config.yml` (a path under `public/` that starts with a single `/`; leave `""` for the default mark).
 3. Write more pages under `content/`.
 4. Run `leaf build` to produce the deployable site in `dist/`.
 5. Push `dist/` to any static host: Netlify, Vercel, GitHub Pages, Cloudflare Pages, or your own server.
