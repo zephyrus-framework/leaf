@@ -133,7 +133,7 @@ leaf:
   logo: "/assets/images/logo.svg"
 ```
 
-The header shows it next to the site name, in place of the default mark, and prefixes it with `base_url`. An empty string keeps the default mark; any other value (a relative path, a full URL, `//`) stops the build with a message that says what is accepted.
+The header shows it next to the site name, in place of the default mark, and prefixes it with `base_url`. When the header is too narrow for the whole name beside the logo, the name is hidden rather than cut, and screen readers still read it. An empty string keeps the default mark; any other value (a relative path, a full URL, `//`) stops the build with a message that says what is accepted.
 
 ### Custom Pages
 
