@@ -1,8 +1,9 @@
 /**
- * Client-side fuzzy search for documentation.
+ * Client-side search of the site's pages.
  *
- * Loads /docs/search.json on first open, then filters results as you type, matching titles, headings and the page text.
- * Supports keyboard navigation (up/down arrows, Enter, Escape).
+ * On first open, loads the index named by the leaf-search-url meta tag (the search.json of the page's locale), then
+ * ranks titles, headings and the page text as you type. The first result is preselected: Enter opens it, the up and
+ * down arrows move through the results, Escape closes.
  */
 (function () {
     'use strict';
@@ -231,6 +232,8 @@
             item.appendChild(textBlock('search-result-excerpt', snippet(entry, terms), terms));
             return item;
         }));
+        activeIndex = 0;
+        updateActiveItem(resultsContainer.querySelectorAll('.search-result-item'));
     }
 
     // A block of text with every occurrence of the terms in a <mark>, the longest term first where several start.
