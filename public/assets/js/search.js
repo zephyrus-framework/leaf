@@ -3,7 +3,8 @@
  *
  * On first open, loads the index named by the leaf-search-url meta tag (the search.json of the page's locale), then
  * ranks titles, headings and the page text as you type. The first result is preselected: Enter opens it, the up and
- * down arrows move through the results, Escape closes.
+ * down arrows move through the results, Escape closes. The field is an ARIA combobox that keeps the focus and names the
+ * selected option of the results listbox in aria-activedescendant.
  */
 (function () {
     'use strict';
@@ -21,6 +22,11 @@
     var ALPHANUMERIC = /[\p{L}\p{N}_]/u;
 
     if (!overlay || !input || !resultsContainer) return;
+
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', resultsContainer.id);
+    input.setAttribute('aria-expanded', 'false');
 
     // ── Public API (called from nav button) ────────────────────
     // Closing gives focus back to the opener: the button passed in, or what had focus before the shortcut.
@@ -62,7 +68,7 @@
 
     // Tab and Shift+Tab wrap around the dialog's controls.
     function keepTabInDialog(e) {
-        var controls = overlay.querySelectorAll('input, button, a[href]');
+        var controls = overlay.querySelectorAll('input, button, a[href]:not([tabindex="-1"])');
         var first = controls[0];
         var last = controls[controls.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -206,32 +212,46 @@
     // ── Rendering ──────────────────────────────────────────────
     // Index values only ever reach the page as text nodes and checked attribute values, never as markup.
     function renderEmpty() {
-        activeIndex = -1;
         renderMessage(emptyLabel);
     }
 
     function renderMessage(text) {
         resultsContainer.replaceChildren(textBlock('search-empty', text, []));
+        setExpanded(false);
     }
 
     function renderResults(results, query, terms) {
-        activeIndex = -1;
-
         if (results.length === 0) {
             renderMessage(noResultsLabel.replace('{query}', function () { return query; }));
             return;
         }
 
-        resultsContainer.replaceChildren.apply(resultsContainer, results.map(function (entry) {
+        resultsContainer.replaceChildren.apply(resultsContainer, results.map(function (entry, i) {
             var item = document.createElement('a');
             item.className = 'search-result-item';
+            item.id = 'search-option-' + i;
+            item.setAttribute('role', 'option');
+            item.setAttribute('tabindex', '-1');
             item.setAttribute('href', entry.url.replace(/\/?$/, '/') + textFragment(entry, terms));
             item.appendChild(textBlock('search-result-title', entry.title, terms));
             item.appendChild(textBlock('search-result-section', entry.section.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }), []));
             item.appendChild(textBlock('search-result-excerpt', snippet(entry, terms), terms));
             return item;
         }));
-        activeIndex = 0;
+        setExpanded(true);
+    }
+
+    // While it holds results, the container is the listbox the field controls, its first option selected.
+    function setExpanded(expanded) {
+        input.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        if (expanded) {
+            resultsContainer.setAttribute('role', 'listbox');
+            if (input.hasAttribute('aria-label')) resultsContainer.setAttribute('aria-label', input.getAttribute('aria-label'));
+        } else {
+            resultsContainer.removeAttribute('role');
+            resultsContainer.removeAttribute('aria-label');
+        }
+        activeIndex = expanded ? 0 : -1;
         updateActiveItem(resultsContainer.querySelectorAll('.search-result-item'));
     }
 
@@ -256,13 +276,16 @@
 
     function updateActiveItem(items) {
         items.forEach(function (item, i) {
-            if (i === activeIndex) {
-                item.classList.add('active');
-                item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('active');
-            }
+            var active = i === activeIndex;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', active ? 'true' : 'false');
+            if (active) item.scrollIntoView({ block: 'nearest' });
         });
+        if (items[activeIndex]) {
+            input.setAttribute('aria-activedescendant', items[activeIndex].id);
+        } else {
+            input.removeAttribute('aria-activedescendant');
+        }
     }
 
     // ── Helpers ─────────────────────────────────────────────────

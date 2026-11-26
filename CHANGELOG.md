@@ -27,6 +27,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - The landing hero glow fades out instead of ending on a hard edge.
 - In the search dialog, the first result is preselected, so Enter opens it.
 - In the search dialog, an accent bar marks the selected result, which its tint alone did not set apart from the others.
+- The search field is an ARIA combobox and its results a listbox, so screen readers announce the selected result. The focus stays in the field: Tab no longer stops on the results.
 - Search ranks pages carrying every term first, and whole words above parts of words.
 
 ### What an override must take over
@@ -37,7 +38,7 @@ A template, stylesheet or script your site overrides belongs to your site. Take 
 - `partials/nav.latte`: `{default bool $showSearch = $docsMode}` at the top, `{if $showSearch}` around the search button; keep the `<span>` of the site name right after the logo `<img class="nav-logo-img">`, which the stylesheet targets.
 - `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script.
 - `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, and `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`.
-- `public/assets/js/search.js`: `search()` and `occurrences()`, and the two lines that end `renderResults()` to preselect the first result.
+- `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()`, `updateActiveItem()` and the selector of `keepTabInDialog()`.
 
 ## Earlier versions
 
