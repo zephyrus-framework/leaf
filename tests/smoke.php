@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 // Builds the theme in two locales, with and without a base URL, then in a single locale, and checks the output.
 // Usage: php tests/smoke.php
+//        php tests/smoke.php --update-tailwind-classes (after composer css adds classes to the compiled sheet)
 
 const LOCALES = ['en', 'fr'];
 const SLUGS = ['introduction', 'writing-content', 'deployment'];
@@ -14,12 +15,19 @@ const TABLE_PAGES = ['getting-started/writing-content/index.html', 'fr/getting-s
 const PROSE = "//*[contains(concat(' ', normalize-space(@class), ' '), ' prose ')]";
 const LOGO = '/assets/smoke-logo.svg';
 const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary, .error-link-secondary';
+const TAILWIND_SHEET = 'public/assets/css/tailwind.css';
+const TAILWIND_CLASSES = 'tests/tailwind-classes.txt';
+const TAILWIND_CLASSES_HEADER = "# Every class of public/assets/css/tailwind.css. None may go away in 1.x: tests/smoke.php fails if one does.\n"
+    . "# After composer css adds classes, add them here with: php tests/smoke.php --update-tailwind-classes\n";
 
 main();
 
 function main(): void
 {
     $root = dirname(__DIR__);
+    if (in_array('--update-tailwind-classes', $_SERVER['argv'] ?? [], true)) {
+        exit(updateTailwindClasses($root));
+    }
     $work = sys_get_temp_dir() . '/leaf-smoke-' . bin2hex(random_bytes(4));
     $failures = [];
     $pages = 0;
@@ -29,6 +37,10 @@ function main(): void
     try {
         foreach (markupSinks($root . '/public/assets/js/search.js') as $sink) {
             $failures[] = "public/assets/js/search.js: uses $sink, which parses markup; build the results with DOM nodes and textContent";
+        }
+        $lost = lostTailwindClasses($root);
+        if ($lost !== []) {
+            $failures[] = lostTailwindClassesMessage($lost);
         }
 
         foreach (['', '/docs'] as $base) {
@@ -157,6 +169,92 @@ function markupSinks(string $script): array
         ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'DOMParser', 'createContextualFragment', 'setHTMLUnsafe', 'parseHTMLUnsafe', 'srcdoc'],
         static fn (string $sink): bool => str_contains($source, $sink)
     ));
+}
+
+/** Rewrites the list of Tailwind classes from the compiled sheet, unless the sheet lost one of them. */
+function updateTailwindClasses(string $root): int
+{
+    try {
+        $lost = is_file("$root/" . TAILWIND_CLASSES) ? lostTailwindClasses($root) : [];
+        if ($lost !== []) {
+            fwrite(STDERR, 'smoke: ' . lostTailwindClassesMessage($lost) . "\n");
+
+            return 1;
+        }
+        $classes = stylesheetClasses(readText("$root/" . TAILWIND_SHEET));
+    } catch (RuntimeException $e) {
+        fwrite(STDERR, 'smoke: ' . $e->getMessage() . "\n");
+
+        return 2;
+    }
+    file_put_contents("$root/" . TAILWIND_CLASSES, TAILWIND_CLASSES_HEADER . implode("\n", $classes) . "\n");
+    echo count($classes) . ' classes in ' . TAILWIND_CLASSES . "\n";
+
+    return 0;
+}
+
+/**
+ * The classes of the reference list that the compiled sheet no longer has.
+ *
+ * @return list<string>
+ */
+function lostTailwindClasses(string $root): array
+{
+    $listed = [];
+    foreach (explode("\n", readText("$root/" . TAILWIND_CLASSES)) as $line) {
+        if ($line !== '' && !str_starts_with($line, '#')) {
+            $listed[] = $line;
+        }
+    }
+
+    return array_values(array_diff($listed, stylesheetClasses(readText("$root/" . TAILWIND_SHEET))));
+}
+
+/** @param list<string> $lost */
+function lostTailwindClassesMessage(array $lost): string
+{
+    return TAILWIND_SHEET . ' lost ' . implode(', ', $lost) . ', listed in ' . TAILWIND_CLASSES
+        . '; a class of the compiled sheet never goes away in 1.x';
+}
+
+/**
+ * The class names in the selectors of a stylesheet, unescaped and sorted.
+ *
+ * @return list<string>
+ */
+function stylesheetClasses(string $css): array
+{
+    $css = (string) preg_replace('~/\*.*?\*/~s', '', $css);
+    preg_match_all('/((?:\\\\.|[^{}\\\\])+)\{/s', $css, $preludes);
+    $classes = [];
+    foreach ($preludes[1] as $prelude) {
+        if (str_starts_with(ltrim($prelude), '@')) {
+            continue;
+        }
+        preg_match_all('/\.((?:[\w-]|\\\\[0-9a-fA-F]{1,6} ?|\\\\[^0-9a-fA-F\n])+)/', $prelude, $names);
+        foreach ($names[1] as $name) {
+            $class = preg_replace_callback(
+                '/\\\\(?:([0-9a-fA-F]{1,6}) ?|(.))/s',
+                static fn (array $m): string => $m[1] !== '' ? mb_chr((int) hexdec($m[1])) : $m[2],
+                $name
+            );
+            $classes[(string) $class] = true;
+        }
+    }
+    $classes = array_map('strval', array_keys($classes));
+    sort($classes, SORT_STRING);
+
+    return $classes;
+}
+
+function readText(string $path): string
+{
+    $text = file_get_contents($path);
+    if ($text === false) {
+        throw new RuntimeException("could not read $path");
+    }
+
+    return $text;
 }
 
 /** @return list<string> */
