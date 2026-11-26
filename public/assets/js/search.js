@@ -17,6 +17,7 @@
     var returnFocusTo = null;
     var madeInert = [];
     var SNIPPET_LENGTH = 120;
+    var ALPHANUMERIC = /[\p{L}\p{N}_]/u;
 
     if (!overlay || !input || !resultsContainer) return;
 
@@ -224,7 +225,7 @@
         resultsContainer.replaceChildren.apply(resultsContainer, results.map(function (entry) {
             var item = document.createElement('a');
             item.className = 'search-result-item';
-            item.setAttribute('href', entry.url.replace(/\/?$/, '/'));
+            item.setAttribute('href', entry.url.replace(/\/?$/, '/') + textFragment(entry, terms));
             item.appendChild(textBlock('search-result-title', entry.title, terms));
             item.appendChild(textBlock('search-result-section', entry.section.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }), []));
             item.appendChild(textBlock('search-result-excerpt', snippet(entry, terms), terms));
@@ -309,6 +310,24 @@
             if (i !== -1 && (found === null || i < found.at)) found = { at: i, length: t.length };
         });
         return found;
+    }
+
+    // For a page found only in its body, a text fragment that opens it at the whole word around the first match.
+    function textFragment(entry, terms) {
+        if (containsTerm(entry.title, terms) || containsTerm(entry.excerpt, terms) || entry.headings.some(function (h) { return containsTerm(h, terms); })) return '';
+        var match = firstMatch(entry, terms);
+        if (match === null) return '';
+        var start = match.at;
+        var end = match.at + match.length;
+        while (start > 0 && isWordCharacter(entry.text, start - 1)) start--;
+        while (end < entry.text.length && isWordCharacter(entry.text, end)) end++;
+        return '#:~:text=' + encodeURIComponent(entry.text.slice(start, end)).replace(/-/g, '%2D');
+    }
+
+    // Text fragments match whole words: letters and digits, joined by an apostrophe or a dot between two of them.
+    function isWordCharacter(text, i) {
+        return ALPHANUMERIC.test(text.charAt(i))
+            || (/['’.]/.test(text.charAt(i)) && ALPHANUMERIC.test(text.charAt(i - 1)) && ALPHANUMERIC.test(text.charAt(i + 1)));
     }
 
     // The excerpt, or when no term shows in it, about SNIPPET_LENGTH characters of the page text around the first match.
