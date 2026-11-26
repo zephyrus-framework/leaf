@@ -8,6 +8,7 @@ declare(strict_types=1);
 const LOCALES = ['en', 'fr'];
 const SLUGS = ['introduction', 'writing-content', 'deployment'];
 const FR_MARKER = 'Marqueur-francais-0451';
+const AUTHOR_LINKS = "\n[doc](/getting-started/deployment/) [home](/) [asset](/assets/css/app.css)\n";
 const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary';
 
 main();
@@ -103,8 +104,9 @@ function stageProject(string $root, string $project, string $base): void
     mkdir("$project/content/fr/getting-started", 0777, true);
     file_put_contents(
         "$project/content/fr/getting-started/introduction.md",
-        "---\ntitle: Introduction\norder: 1\n---\n\n# Introduction\n\n" . FR_MARKER . "\n"
+        "---\ntitle: Introduction\norder: 1\n---\n\n# Introduction\n\n" . FR_MARKER . "\n" . AUTHOR_LINKS
     );
+    file_put_contents("$project/content/getting-started/writing-content.md", AUTHOR_LINKS, FILE_APPEND);
 }
 
 function stageSingleLocaleProject(string $root, string $project): void
@@ -169,6 +171,33 @@ function checkBuild(Report $report, string $dist, string $englishSource): void
     }
 
     checkContent($report, $pages, $dist, $englishSource);
+    checkAuthorLinks($report, $pages);
+}
+
+/** Root-relative doc links and the home link in Markdown keep the page locale, assets never get one. */
+/** @param array<string, DOMDocument> $pages */
+function checkAuthorLinks(Report $report, array $pages): void
+{
+    $base = $report->base;
+    $expected = [
+        'getting-started/writing-content/index.html' => ["$base/getting-started/deployment/", "$base/"],
+        'fr/getting-started/writing-content/index.html' => ["$base/fr/getting-started/deployment/", "$base/fr/"],
+        'fr/getting-started/introduction/index.html' => ["$base/fr/getting-started/deployment/", "$base/fr/"],
+    ];
+    foreach ($expected as $page => [$doc, $home]) {
+        if (!isset($pages[$page])) {
+            continue;
+        }
+        $hrefs = array_map(
+            fn (DOMNode $a): string => $a instanceof DOMElement ? $a->getAttribute('href') : '',
+            iterator_to_array((new DOMXPath($pages[$page]))->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' prose ')]//a") ?: [], false),
+        );
+        foreach ([$doc, $home, "$base/assets/css/app.css"] as $url) {
+            if (!in_array($url, $hrefs, true)) {
+                $report->fail($page, "Markdown link $url is missing or rewritten (found: " . implode(' ', $hrefs) . ')');
+            }
+        }
+    }
 }
 
 /** @return array<string, DOMDocument> */
@@ -272,7 +301,6 @@ function checkThemeElements(Report $report, string $page, DOMDocument $dom): voi
     }
 }
 
-// Markdown links (.prose a) only pass the resolution check: leaf-core does not add the locale prefix to author links.
 function checkThemeLinks(Report $report, string $page, DOMDocument $dom, string $base, bool $isFr): void
 {
     foreach (cssQuery($dom, THEME_LINKS) as $node) {

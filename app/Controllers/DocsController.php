@@ -20,6 +20,9 @@ final class DocsController extends Controller
         private readonly ContentLoader $contentLoader,
         private readonly SearchIndexBuilder $searchIndexBuilder,
         private readonly LeafConfig $leafConfig,
+        private readonly string $defaultLocale = '',
+        /** @var list<string> */
+        private readonly array $supportedLocales = [],
     ) {
     }
 
@@ -77,19 +80,53 @@ final class DocsController extends Controller
     }
 
     /**
-     * Prefix internal links and asset sources in rendered HTML with the configured base URL.
+     * Prefix internal links and asset sources with the base URL, and doc links with the current locale.
      */
     private function prefixInternalLinks(string $html): string
     {
         $baseUrl = rtrim($this->leafConfig->baseUrl, '/');
-        if ($baseUrl === '') {
-            return $html;
-        }
-        return preg_replace(
-            '#(href|src)="(/(?!/)[^"]*)"#',
-            '$1="' . $baseUrl . '$2"',
+        $locale = $this->contentLoader->getCurrentLocale();
+        $localePrefix = $this->usesLocalePrefix($locale) ? '/' . $locale : '';
+        $docPaths = $localePrefix === '' ? [] : $this->docPaths();
+
+        return preg_replace_callback(
+            '#\b(href|src)="(/(?!/)[^"]*)"#',
+            function (array $m) use ($baseUrl, $localePrefix, $docPaths): string {
+                $url = $m[2];
+                if ($m[1] === 'href' && $localePrefix !== '' && $this->isLocalizable($url, $docPaths)) {
+                    $url = $localePrefix . $url;
+                }
+                return $m[1] . '="' . $baseUrl . $url . '"';
+            },
             $html,
-        );
+        ) ?? $html;
+    }
+
+    private function usesLocalePrefix(string $locale): bool
+    {
+        return $locale !== '' && $locale !== $this->defaultLocale && in_array($locale, $this->supportedLocales, true);
+    }
+
+    /** @return array<string, true> */
+    private function docPaths(): array
+    {
+        $paths = [];
+        foreach ($this->contentLoader->getAllPages() as $page) {
+            $paths['/' . $page['section'] . '/' . $page['slug']] = true;
+        }
+        return $paths;
+    }
+
+    /** @param array<string, true> $docPaths */
+    private function isLocalizable(string $url, array $docPaths): bool
+    {
+        $path = strtok($url, '?#');
+        if ($path === '/') {
+            return true;
+        }
+        $firstSegment = explode('/', $path, 3)[1] ?? '';
+        return !in_array($firstSegment, $this->supportedLocales, true)
+            && isset($docPaths[rtrim($path, '/')]);
     }
 
     #[Get('/404')]

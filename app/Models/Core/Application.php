@@ -17,6 +17,8 @@ final class Application extends Kernel
                 $this->contentLoader,
                 $this->searchIndexBuilder,
                 $this->leafConfig,
+                $this->config->localization->locale,
+                array_values($this->config->localization->supportedLocales),
             );
         }
         if ($class === PagesController::class) {
