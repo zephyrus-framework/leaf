@@ -23,6 +23,7 @@
     var returnFocusTo = null;
     var madeInert = [];
     var SNIPPET_LENGTH = 120;
+    var INDEX_TIMEOUT_MS = 10000;
     var ALPHANUMERIC = /[\p{L}\p{N}_]/u;
 
     if (!overlay || !input || !resultsContainer) return;
@@ -357,7 +358,10 @@
             var baseUrl = (document.querySelector('meta[name="leaf-base-url"]') || {}).content || '';
             searchUrl = baseUrl + '/search.json';
         }
-        fetch(searchUrl)
+        // An index that has not arrived in time counts as unavailable, and the next opening fetches it again.
+        var request = new AbortController();
+        var timeout = setTimeout(function () { request.abort(); }, INDEX_TIMEOUT_MS);
+        fetch(searchUrl, { signal: request.signal })
             .then(function (r) {
                 if (!r.ok) throw new Error('HTTP ' + r.status);
                 return r.json();
@@ -374,6 +378,7 @@
                 indexFailed = true;
             })
             .then(function () {
+                clearTimeout(timeout);
                 indexLoading = false;
                 if (overlay.classList.contains('active')) runQuery();
             });
