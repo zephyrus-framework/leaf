@@ -1069,7 +1069,8 @@ body:not(:has(#main-content)) > .skip-link {
     color: #22c55e;
     border-color: rgba(34, 197, 94, 0.3);
 }
-.copy-code-status {
+.copy-code-status,
+.search-status {
     position: absolute;
     width: 1px;
     height: 1px;

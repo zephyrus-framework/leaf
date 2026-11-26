@@ -32,6 +32,12 @@
     input.setAttribute('aria-controls', resultsContainer.id);
     input.setAttribute('aria-expanded', 'false');
 
+    // Screen readers hear the messages from a status region in the dialog, as the page around it is inert while open.
+    var statusRegion = document.createElement('div');
+    statusRegion.className = 'search-status';
+    statusRegion.setAttribute('role', 'status');
+    (overlay.querySelector('[role="dialog"]') || overlay).appendChild(statusRegion);
+
     // ── Public API (called from nav button) ────────────────────
     // Closing gives focus back to the opener: the button passed in, or what had focus before the shortcut.
     window.openSearch = function (opener) {
@@ -236,14 +242,28 @@
 
     // ── Rendering ──────────────────────────────────────────────
     // Index values only ever reach the page as text nodes and checked attribute values, never as markup.
+
+    // The invitation to type, which screen readers are not told.
     function renderEmpty() {
-        renderMessage(emptyLabel);
+        showMessage(emptyLabel);
+        announce('');
     }
 
+    // A message in place of the results (loading, unavailable, no results), which screen readers are told too.
     function renderMessage(text) {
+        showMessage(text);
+        announce(text);
+    }
+
+    function showMessage(text) {
         resultsContainer.replaceChildren(textBlock('search-empty', text, []));
         setExpanded(false);
         selectResult(-1);
+    }
+
+    // The status region changes only with the message, so that a screen reader hears each message once.
+    function announce(text) {
+        if (statusRegion.textContent !== text) statusRegion.textContent = text;
     }
 
     function renderResults(results, query, terms) {
@@ -266,6 +286,7 @@
         }));
         setExpanded(true);
         selectResult(0);
+        announce('');
     }
 
     // While it holds results, the container is the listbox the field controls.
