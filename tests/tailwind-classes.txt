@@ -1,5 +1,5 @@
-# Every class of public/assets/css/tailwind.css. None may go away in 1.x: tests/smoke.php fails if one does.
-# After composer css adds classes, add them here with: php tests/smoke.php --update-tailwind-classes
+# Every class of public/assets/css/tailwind.css. None may go away in 1.x: tests/smoke.php fails if one does,
+# and if the sheet has one missing here. After composer css adds classes: php tests/smoke.php --update-tailwind-classes
 absolute
 antialiased
 bg-accent-fill

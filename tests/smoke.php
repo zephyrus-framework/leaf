@@ -17,8 +17,8 @@ const LOGO = '/assets/smoke-logo.svg';
 const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary, .error-link-secondary';
 const TAILWIND_SHEET = 'public/assets/css/tailwind.css';
 const TAILWIND_CLASSES = 'tests/tailwind-classes.txt';
-const TAILWIND_CLASSES_HEADER = "# Every class of public/assets/css/tailwind.css. None may go away in 1.x: tests/smoke.php fails if one does.\n"
-    . "# After composer css adds classes, add them here with: php tests/smoke.php --update-tailwind-classes\n";
+const TAILWIND_CLASSES_HEADER = "# Every class of public/assets/css/tailwind.css. None may go away in 1.x: tests/smoke.php fails if one does,\n"
+    . "# and if the sheet has one missing here. After composer css adds classes: php tests/smoke.php --update-tailwind-classes\n";
 
 main();
 
@@ -41,6 +41,11 @@ function main(): void
         $lost = lostTailwindClasses($root);
         if ($lost !== []) {
             $failures[] = lostTailwindClassesMessage($lost);
+        }
+        $unlisted = unlistedTailwindClasses($root);
+        if ($unlisted !== []) {
+            $failures[] = TAILWIND_SHEET . ' has ' . implode(', ', $unlisted) . ', missing from ' . TAILWIND_CLASSES
+                . '; add them to the classes kept in 1.x with: php tests/smoke.php --update-tailwind-classes';
         }
 
         foreach (['', '/docs'] as $base) {
@@ -200,6 +205,22 @@ function updateTailwindClasses(string $root): int
  */
 function lostTailwindClasses(string $root): array
 {
+    return array_values(array_diff(listedTailwindClasses($root), stylesheetClasses(readText("$root/" . TAILWIND_SHEET))));
+}
+
+/**
+ * The classes of the compiled sheet that the reference list lacks.
+ *
+ * @return list<string>
+ */
+function unlistedTailwindClasses(string $root): array
+{
+    return array_values(array_diff(stylesheetClasses(readText("$root/" . TAILWIND_SHEET)), listedTailwindClasses($root)));
+}
+
+/** @return list<string> */
+function listedTailwindClasses(string $root): array
+{
     $listed = [];
     foreach (explode("\n", readText("$root/" . TAILWIND_CLASSES)) as $line) {
         if ($line !== '' && !str_starts_with($line, '#')) {
@@ -207,7 +228,7 @@ function lostTailwindClasses(string $root): array
         }
     }
 
-    return array_values(array_diff($listed, stylesheetClasses(readText("$root/" . TAILWIND_SHEET))));
+    return $listed;
 }
 
 /** @param list<string> $lost */
