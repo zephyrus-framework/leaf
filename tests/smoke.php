@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// Builds the theme in two locales, with and without a base URL, and checks the output.
+// Builds the theme in two locales, with and without a base URL, then in a single locale, and checks the output.
 // Usage: php tests/smoke.php
 
 const LOCALES = ['en', 'fr'];
@@ -35,6 +35,16 @@ function main(): void
             $pages += $report->pages;
             $links += $report->links;
         }
+
+        $project = "$work/single";
+        stageSingleLocaleProject($root, $project);
+        $build = runBuild($project);
+        if ($build === null && !is_file($project . '/dist/404.html')) {
+            $build = '404.html is missing';
+        }
+        if ($build !== null) {
+            $failures[] = "[single locale] $build";
+        }
     } catch (RuntimeException $e) {
         $refusal = $e->getMessage();
     } finally {
@@ -50,7 +60,7 @@ function main(): void
         echo implode("\n", $failures) . "\n";
         exit(1);
     }
-    echo "OK: $pages pages, $links links, 2 builds\n";
+    echo "OK: $pages pages, $links links, 3 builds\n";
 }
 
 final class Report
@@ -91,6 +101,22 @@ function stageProject(string $root, string $project, string $base): void
         "$project/content/fr/getting-started/introduction.md",
         "---\ntitle: Introduction\norder: 1\n---\n\n# Introduction\n\n" . FR_MARKER . "\n"
     );
+}
+
+function stageSingleLocaleProject(string $root, string $project): void
+{
+    mkdir($project, 0777, true);
+    foreach (['app', 'bin', 'content', 'public'] as $dir) {
+        copyTree("$root/$dir", "$project/$dir");
+    }
+    copy("$root/composer.json", "$project/composer.json");
+    symlink("$root/vendor", "$project/vendor");
+
+    $config = preg_replace('/^localization:\n(?:[ \t]+.*\n|\n)*/m', '', (string) file_get_contents("$root/config.yml"), 1, $count);
+    if ($count !== 1) {
+        throw new RuntimeException('could not remove the localization section from config.yml');
+    }
+    file_put_contents("$project/config.yml", $config);
 }
 
 function runBuild(string $project): ?string
