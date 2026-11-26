@@ -5,7 +5,7 @@
                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
             </svg>
             <input type="text" class="search-input" id="search-input" placeholder="{localize('search.placeholder')}" aria-label="{localize('search.label')}" autocomplete="off" autofocus>
-            <button type="button" class="search-close" onclick="closeSearch()" aria-label="{localize('search.close', ['key' => localize('search.escape')])}"><kbd>{localize('search.escape')}</kbd></button>
+            <button type="button" class="search-close" onclick="closeSearch()" aria-label="{localize('search.close', ['key' => localize('search.escape')])}"><kbd>{localize('search.escape')}</kbd><span class="search-close-text">{localize('search.close_text')}</span></button>
         </div>
         <div class="search-results" id="search-results" data-empty="{localize('search.empty')}" data-no-results="{localize('search.no_results')}">
             <div class="search-empty">{localize('search.empty')}</div>
