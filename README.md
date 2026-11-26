@@ -52,11 +52,15 @@ my-docs/
 ├── public/
 │   ├── assets/
 │   │   ├── css/app.css     # Full theme CSS
+│   │   ├── css/tailwind.css # Compiled Tailwind classes (composer css)
 │   │   └── js/             # Copy-code, sidebar, search scripts
 │   └── index.php
+├── resources/css/          # Tailwind input
+├── tailwind.config.js      # Tailwind tokens and the files it scans
 ├── bin/
 │   ├── router.php          # Dev server entry point
-│   └── build.php           # Static site builder
+│   ├── build.php           # Static site builder
+│   └── tailwind.sh         # Compiles css/tailwind.css
 └── dist/                   # Built static output (after composer build)
 ```
 
@@ -180,11 +184,56 @@ Additional Prism.js languages can be added in `app/Views/layouts/docs.latte`:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
 ```
 
+## Styling
+
+The theme ships its Tailwind CSS classes compiled, in `public/assets/css/tailwind.css` (Tailwind CSS 3.4.17), linked right after `app.css`. It holds the classes the theme's templates and scripts use, with the colour tokens (`deep`, `surface`, `elevated`, `border`, `border-accent`, `body`, `bright`, `muted`, `accent`, `accent-light`, `accent-fill`, `accent-fill-hover`, `accent-glow`) and the fonts (`font-body`, `font-mono`). No page loads Tailwind as a script.
+
+A template of your site that uses a class the sheet lacks:
+
+- **Composer project**: run `composer css` and commit `public/assets/css/tailwind.css`. It compiles the sheet again from `app/Views/**/*.latte` and `public/assets/js/**/*.js` with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. It needs `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
+- **Binary project**: the CLI ships the theme's sheet as it is. Load Tailwind in the browser from your `templates/partials/head.latte` (a copy of the theme's), after the stylesheet links, or link your own stylesheet from there:
+
+```html
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+if (window.tailwind) {
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    deep: 'var(--bg-deep)',
+                    surface: 'var(--bg-surface)',
+                    elevated: 'var(--bg-elevated)',
+                    border: 'var(--border)',
+                    'border-accent': 'var(--border-accent)',
+                    body: 'var(--text)',
+                    bright: 'var(--text-bright)',
+                    muted: 'var(--text-muted)',
+                    accent: 'var(--accent)',
+                    'accent-light': 'var(--accent-light)',
+                    'accent-fill': 'var(--accent-fill)',
+                    'accent-fill-hover': 'var(--accent-fill-hover)',
+                    'accent-glow': 'var(--accent-glow)',
+                },
+                fontFamily: {
+                    body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                },
+            },
+        },
+    };
+}
+</script>
+```
+
+A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the inline script in `script-src`.
+
 ## Commands
 
 ```bash
 composer dev     # Start dev server with live-reload (localhost:8080)
 composer build   # Generate static HTML to dist/
+composer css     # Compile public/assets/css/tailwind.css again from the templates and scripts
 ```
 
 ## Deployment
@@ -205,7 +254,7 @@ Leaf follows semantic versioning since 1.0.0: nothing breaks before 2.0. The ful
 
 - **Public**: the configuration, the names of the templates Leaf renders and the variables each one receives.
 - **Not public**: the markup inside the theme's templates, the classes of `app.css` and the theme's JavaScript. A template you override belongs to your site; the changelog names each template, stylesheet or script a release changes and what an override must take over.
-- **Styling**: throughout 1.x the theme loads Tailwind CSS v3 in the browser with its colour and font tokens, so a template can use any Tailwind v3 utility class.
+- **Styling**: the theme's compiled Tailwind stylesheet never loses a class in 1.x, and its colour and font tokens stay. For a class it lacks, see [Styling](#styling).
 
 ## License
 
