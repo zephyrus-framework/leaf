@@ -5,10 +5,12 @@
     {block styles}{/block}
     {block head}{/block}
 </head>
-<body class="bg-deep text-body antialiased font-body">
+<body class="landing-layout bg-deep text-body antialiased font-body">
     <a class="skip-link" href="#main-content">{localize('nav.skip')}</a>
     {include '../partials/nav.latte'}
-    {block content}{/block}
+    <div class="landing-content">
+        {block content}{/block}
+    </div>
     {include '../partials/footer.latte'}
 
     <script src="{$leafBaseUrl}/assets/js/lang-switcher.js"></script>

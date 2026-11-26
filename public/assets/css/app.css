@@ -677,6 +677,16 @@ body:not(:has(#main-content)) > .skip-link {
 }
 
 /* ── Footer ───────────────────────────────────────────────── */
+/* A landing page shorter than the window keeps its footer at the bottom of the window. */
+.landing-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+.landing-content {
+    flex: 1 0 auto;
+}
 .site-footer {
     border-top: 1px solid var(--border);
 }
