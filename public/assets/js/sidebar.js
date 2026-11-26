@@ -126,14 +126,22 @@
         setPageInert(false);
     };
 
+    function closeSidebarToToggle() {
+        closeSidebar();
+        if (navToggle) navToggle.focus();
+    }
+
     // Escape closes the drawer and returns focus to its button, unless a layer above it took the key or is still open.
     document.addEventListener('keydown', function (e) {
         var sidebar = document.querySelector('.docs-sidebar');
         if (e.key !== 'Escape' || e.defaultPrevented || !sidebar || !sidebar.classList.contains('active')) return;
         if (document.querySelector('.search-overlay.active, .lang-switcher[data-open="true"]')) return;
-        closeSidebar();
-        if (navToggle) navToggle.focus();
+        closeSidebarToToggle();
     });
+
+    // A tap on the veil beside the open drawer closes it and returns focus to its button.
+    var sidebarOverlay = document.querySelector('.sidebar-overlay');
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebarToToggle);
 
     // Focus moving outside the open drawer, its button and the search dialog closes the drawer without moving it back.
     document.addEventListener('focusout', function (e) {
