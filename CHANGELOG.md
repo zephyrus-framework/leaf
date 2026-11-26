@@ -30,6 +30,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - The search field is an ARIA combobox and its results a listbox, so screen readers announce the selected result. The focus stays in the field: Tab no longer stops on the results.
 - In the search dialog, the pointer moves the selection to the result it hovers, so one result only is highlighted at a time.
 - A query typed before the search index has arrived runs as soon as it does, instead of finding nothing.
+- An entry of the search index with a field of the wrong type is left out, instead of leaving the whole search without results.
 - In the page content, an inline code longer than the line wraps instead of running out of the column, which made a narrow screen scroll sideways. Code blocks and the code in tables keep scrolling.
 - Search ranks pages carrying every term first, and whole words above parts of words.
 
@@ -41,7 +42,7 @@ A template, stylesheet or script your site overrides belongs to your site. Take 
 - `partials/nav.latte`: `{default bool $showSearch = $docsMode}` at the top, `{if $showSearch}` around the search button; keep the `<span>` of the site name right after the logo `<img class="nav-logo-img">`, which the stylesheet targets.
 - `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script.
 - `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`, `.search-result-item:hover` taken out of the rule that highlights `.search-result-item.active`, and the new `.prose code:not(pre code, td code, th code)`.
-- `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()`, `updateActiveItem()` and the selector of `keepTabInDialog()`; the new `mousemove` listener on the results, which moves the selection; `runQuery()`, the input listener now named, and the `.then()` that ends `loadIndex()`.
+- `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()`, `updateActiveItem()` and the selector of `keepTabInDialog()`; the new `mousemove` listener on the results, which moves the selection; `runQuery()`, the input listener now named; in `loadIndex()`, the filter with the new `isSearchableEntry()`, the `content` read as a string only, and the `.then()` that ends it.
 
 ## Earlier versions
 

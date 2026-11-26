@@ -312,14 +312,25 @@
         fetch(searchUrl)
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                searchIndex = data.filter(function (entry) { return isSiteUrl(entry.url); });
+                searchIndex = data.filter(isSearchableEntry);
                 searchIndex.forEach(function (entry) {
-                    entry.text = (entry.content || '').replace(/\s+/g, ' ').trim();
+                    entry.text = (typeof entry.content === 'string' ? entry.content : '').replace(/\s+/g, ' ').trim();
                     entry.textLower = entry.text.toLowerCase();
                 });
             })
             .catch(function () { searchIndex = []; })
             .then(function () { if (input.value.trim() !== '') runQuery(); });
+    }
+
+    // An entry the search can read: a link to this site, string fields and a list of string headings.
+    function isSearchableEntry(entry) {
+        return entry !== null && typeof entry === 'object'
+            && isSiteUrl(entry.url)
+            && typeof entry.title === 'string'
+            && typeof entry.section === 'string'
+            && typeof entry.excerpt === 'string'
+            && Array.isArray(entry.headings)
+            && entry.headings.every(function (heading) { return typeof heading === 'string'; });
     }
 
     // A path on this site: one leading slash, never a second one (or a backslash) that would make it protocol-relative.
