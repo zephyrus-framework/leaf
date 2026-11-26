@@ -1334,7 +1334,6 @@ body:not(:has(#main-content)) > .skip-link {
     transition: background 0.1s ease;
     cursor: pointer;
 }
-.search-result-item:hover,
 .search-result-item.active {
     background: var(--bg-elevated);
 }

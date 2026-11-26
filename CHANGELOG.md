@@ -28,6 +28,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - In the search dialog, the first result is preselected, so Enter opens it.
 - In the search dialog, an accent bar marks the selected result, which its tint alone did not set apart from the others.
 - The search field is an ARIA combobox and its results a listbox, so screen readers announce the selected result. The focus stays in the field: Tab no longer stops on the results.
+- In the search dialog, the pointer moves the selection to the result it hovers, so one result only is highlighted at a time.
 - Search ranks pages carrying every term first, and whole words above parts of words.
 
 ### What an override must take over
@@ -37,8 +38,8 @@ A template, stylesheet or script your site overrides belongs to your site. Take 
 - `partials/head.latte`: in place of the `cdn.tailwindcss.com` script and the inline `tailwind.config` script after it, `<link rel="stylesheet" href="{$leafBaseUrl}/assets/css/tailwind.css">` right after the `app.css` link (after it, so that its rules still win over `app.css` as the CDN's did). An override that keeps the CDN keeps working.
 - `partials/nav.latte`: `{default bool $showSearch = $docsMode}` at the top, `{if $showSearch}` around the search button; keep the `<span>` of the site name right after the logo `<img class="nav-logo-img">`, which the stylesheet targets.
 - `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script.
-- `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, and `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`.
-- `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()`, `updateActiveItem()` and the selector of `keepTabInDialog()`.
+- `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`, and `.search-result-item:hover` taken out of the rule that highlights `.search-result-item.active`.
+- `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()`, `updateActiveItem()` and the selector of `keepTabInDialog()`; the new `mousemove` listener on the results, which moves the selection.
 
 ## Earlier versions
 

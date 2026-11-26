@@ -154,6 +154,19 @@
         if (e.target.closest('.search-result-item')) window.closeSearch();
     });
 
+    // The pointer selects the result it moves over, but a scroll that brings another result under a still pointer does not.
+    var lastPointer = '';
+    resultsContainer.addEventListener('mousemove', function (e) {
+        var at = e.clientX + ',' + e.clientY;
+        if (at === lastPointer) return;
+        lastPointer = at;
+        var items = resultsContainer.querySelectorAll('.search-result-item');
+        var index = Array.prototype.indexOf.call(items, e.target.closest('.search-result-item'));
+        if (index === -1 || index === activeIndex) return;
+        activeIndex = index;
+        updateActiveItem(items, true);
+    });
+
     // Search on input.
     input.addEventListener('input', function () {
         var query = input.value.trim().toLowerCase();
@@ -274,12 +287,12 @@
         return block;
     }
 
-    function updateActiveItem(items) {
+    function updateActiveItem(items, byPointer) {
         items.forEach(function (item, i) {
             var active = i === activeIndex;
             item.classList.toggle('active', active);
             item.setAttribute('aria-selected', active ? 'true' : 'false');
-            if (active) item.scrollIntoView({ block: 'nearest' });
+            if (active && !byPointer) item.scrollIntoView({ block: 'nearest' });
         });
         if (items[activeIndex]) {
             input.setAttribute('aria-activedescendant', items[activeIndex].id);
