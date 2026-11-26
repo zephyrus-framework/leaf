@@ -23,6 +23,7 @@
     --overlay-bg: rgba(8, 8, 13, 0.6);
     --search-overlay: rgba(8, 8, 13, 0.7);
     --code-tab-header: rgba(17, 17, 26, 0.5);
+    --table-edge: rgba(161, 161, 170, 0.4);
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
     --nav-height: 4rem;
@@ -49,6 +50,7 @@
     --overlay-bg: rgba(255, 255, 255, 0.6);
     --search-overlay: rgba(255, 255, 255, 0.7);
     --code-tab-header: rgba(248, 248, 250, 0.5);
+    --table-edge: rgba(24, 24, 27, 0.16);
     color-scheme: light;
 }
 
@@ -69,6 +71,7 @@
         --overlay-bg: rgba(255, 255, 255, 0.6);
         --search-overlay: rgba(255, 255, 255, 0.7);
         --code-tab-header: rgba(248, 248, 250, 0.5);
+        --table-edge: rgba(24, 24, 27, 0.16);
         color-scheme: light;
     }
 }
@@ -1039,21 +1042,25 @@ code[class*="language-"] {
     }
 }
 
-/* Tables: a wide one scrolls in its own frame, the empty caption keeps a narrow one at full width. */
-.prose table {
-    display: block;
+/* Tables: a wide one scrolls in its frame, with a shadow on each side where it continues. */
+.table-scroll {
     overflow-x: auto;
-    container-type: inline-size;
+    margin: 0 0 1.25rem;
+    background:
+        linear-gradient(to right, var(--bg-deep) 40%, transparent) left / 3rem 100% no-repeat local,
+        linear-gradient(to left, var(--bg-deep) 40%, transparent) right / 3rem 100% no-repeat local,
+        radial-gradient(farthest-side at 0 50%, var(--table-edge), transparent) left / 0.75rem 100% no-repeat scroll,
+        radial-gradient(farthest-side at 100% 50%, var(--table-edge), transparent) right / 0.75rem 100% no-repeat scroll;
+}
+.table-scroll > table {
+    margin: 0;
+}
+
+.prose table {
     width: 100%;
     border-collapse: collapse;
     margin: 0 0 1.25rem;
     font-size: 0.8125rem;
-}
-.prose table::after {
-    content: "";
-    display: table-caption;
-    caption-side: bottom;
-    width: 100cqw;
 }
 
 .prose th {
@@ -1066,6 +1073,10 @@ code[class*="language-"] {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+/* Half the elevated tone over the page paints the header tone and lets the edge shadow through. */
+.table-scroll th {
+    background: color-mix(in srgb, var(--bg-elevated) 50%, transparent);
 }
 
 .prose td {

@@ -30,6 +30,10 @@
     "copy_label": "Copier le code dans le presse-papiers",
     "copied": "Code copié dans le presse-papiers"
   },
+  "table": {
+    "scroll": "Tableau défilant",
+    "scroll_caption": "Tableau défilant\u00a0: {caption}"
+  },
   "sidebar": {
     "label": "Navigation de la documentation",
     "powered_by": "Propulsé par"

@@ -65,7 +65,7 @@ final class DocsController extends Controller
             'pageDescription' => $description,
             'section' => $section,
             'slug' => $slug,
-            'content' => $this->prefixInternalLinks($page->html),
+            'content' => $this->wrapTables($this->prefixInternalLinks($page->html)),
             'sidebar' => $this->contentLoader->getSidebar(),
             'toc' => $page->toc,
             'prevPage' => $this->contentLoader->getPreviousPage($section, $slug),
@@ -99,6 +99,18 @@ final class DocsController extends Controller
                 }
                 return $m[1] . '="' . $baseUrl . $url . '"';
             },
+            $html,
+        ) ?? $html;
+    }
+
+    /**
+     * Wrap each top-level table in a frame that scrolls sideways when the table is wider than the page.
+     */
+    private function wrapTables(string $html): string
+    {
+        return preg_replace(
+            '#<table\b[^>]*+>(?:[^<]++|<(?!/?table\b)|(?R))*+</table\s*>#i',
+            '<div class="table-scroll">$0</div>',
             $html,
         ) ?? $html;
     }

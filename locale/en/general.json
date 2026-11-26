@@ -30,6 +30,10 @@
     "copy_label": "Copy code to clipboard",
     "copied": "Code copied to clipboard"
   },
+  "table": {
+    "scroll": "Scrollable table",
+    "scroll_caption": "Scrollable table: {caption}"
+  },
   "sidebar": {
     "label": "Documentation navigation",
     "powered_by": "Powered by"
