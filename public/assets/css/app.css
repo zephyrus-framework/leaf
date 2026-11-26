@@ -265,6 +265,9 @@ code[class*="language-"] {
     outline-offset: 2px;
     box-shadow: 0 0 0 2px var(--bg-deep);
 }
+body:not(:has(#main-content)) > .skip-link {
+    display: none;
+}
 #main-content:focus {
     outline: none;
 }
