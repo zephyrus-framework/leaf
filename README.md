@@ -174,6 +174,8 @@ The design system is defined as CSS custom properties in `public/assets/css/app.
 | `--font-body` | Inter | Body font |
 | `--font-mono` | JetBrains Mono | Code font |
 
+These properties are public: none is renamed or removed in 1.x. The rest of `app.css` is not (see [Versioning](#versioning)).
+
 ### Interface Text and Languages
 
 The theme's labels (search, pagination, table of contents, 404 page) are read with `{localize('search.placeholder')}` from `locale/en/general.json`, and `locale/fr/general.json` carries their French translation. To publish a French version, add `fr` to `localization.supported_locales` in `config.yml` and put the translated pages under `content/fr/`. The site name, its description (`leaf.description`) and the section titles come from `config.yml` and are not translated per locale.
@@ -256,7 +258,7 @@ Leaf follows semantic versioning since 1.0.0: nothing breaks before 2.0. The ful
 
 - **Public**: the configuration, the names of the templates Leaf renders and the variables each one receives.
 - **Not public**: the markup inside the theme's templates, the classes of `app.css` and the theme's JavaScript. A template you override belongs to your site; the changelog names each template, stylesheet or script a release changes and what an override must take over.
-- **Styling**: the theme's compiled Tailwind stylesheet never loses a class in 1.x, and its colour and font tokens stay. For a class it lacks, see [Styling](#styling).
+- **Styling**: the theme's compiled Tailwind stylesheet never loses a class in 1.x, its colour and font tokens stay, and so do the CSS properties listed in [Theme](#theme). For a class it lacks, see [Styling](#styling).
 
 ## License
 
