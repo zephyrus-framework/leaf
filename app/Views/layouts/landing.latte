@@ -7,12 +7,15 @@
 </head>
 <body class="landing-layout bg-deep text-body antialiased font-body">
     <a class="skip-link" href="#main-content">{localize('nav.skip')}</a>
-    {include '../partials/nav.latte'}
+    {include '../partials/nav.latte', showSearch: true}
     <div class="landing-content">
         {block content}{/block}
     </div>
     {include '../partials/footer.latte'}
 
+    {include '../partials/search-modal.latte'}
+
+    <script src="{$leafBaseUrl}/assets/js/search.js"></script>
     <script src="{$leafBaseUrl}/assets/js/lang-switcher.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
