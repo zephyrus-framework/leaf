@@ -20,9 +20,9 @@ final class DocsController extends Controller
         private readonly ContentLoader $contentLoader,
         private readonly SearchIndexBuilder $searchIndexBuilder,
         private readonly LeafConfig $leafConfig,
-        private readonly string $defaultLocale = '',
+        private readonly string $defaultLocale,
         /** @var list<string> */
-        private readonly array $supportedLocales = [],
+        private readonly array $supportedLocales,
     ) {
     }
 
@@ -45,10 +45,7 @@ final class DocsController extends Controller
         $page = $this->contentLoader->getPage($section, $slug);
 
         if ($page === null) {
-            return $this->render('404', [
-                'title' => 'Page Not Found',
-                'firstPage' => $this->contentLoader->getAllPages()[0] ?? null,
-            ], 404);
+            return $this->renderNotFound(404);
         }
 
         $description = $page->meta('description', '');
@@ -145,9 +142,14 @@ final class DocsController extends Controller
     #[Get('/404')]
     public function notFound(): Response
     {
+        return $this->renderNotFound(200);
+    }
+
+    private function renderNotFound(int $status): Response
+    {
         return $this->render('404', [
             'title' => 'Page Not Found',
             'firstPage' => $this->contentLoader->getAllPages()[0] ?? null,
-        ]);
+        ], $status);
     }
 }
