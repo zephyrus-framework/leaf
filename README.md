@@ -52,7 +52,7 @@ my-docs/
 ├── public/
 │   ├── assets/
 │   │   ├── css/app.css     # Full theme CSS
-│   │   ├── css/tailwind.css # Compiled Tailwind classes (composer css)
+│   │   ├── css/tailwind.css # Compiled Tailwind classes (composer css or build)
 │   │   └── js/             # Copy-code, sidebar, search scripts
 │   └── index.php
 ├── resources/css/          # Tailwind input
@@ -192,7 +192,7 @@ The theme ships its Tailwind CSS classes compiled, in `public/assets/css/tailwin
 
 A template of your site that uses a class the sheet lacks:
 
-- **Composer project**: run `composer css` and commit `public/assets/css/tailwind.css`. It compiles the sheet again from `app/Views/**/*.latte` and `public/assets/js/**/*.js` with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. It needs `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
+- **Composer project**: `composer build` compiles the sheet again before it builds the pages, and `composer css` compiles it alone, for `composer dev`; commit `public/assets/css/tailwind.css`. Both compile it from `app/Views/**/*.latte` and `public/assets/js/**/*.js` with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. They need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
 - **Binary project**: the CLI ships the theme's sheet as it is. Load Tailwind in the browser from your `templates/partials/head.latte` (a copy of the theme's), after the stylesheet links, or link your own stylesheet from there:
 
 ```html
@@ -234,13 +234,13 @@ A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the 
 
 ```bash
 composer dev     # Start dev server with live-reload (localhost:8080)
-composer build   # Generate static HTML to dist/
+composer build   # Compile public/assets/css/tailwind.css, then generate static HTML to dist/
 composer css     # Compile public/assets/css/tailwind.css again from the templates and scripts
 ```
 
 ## Deployment
 
-After running `composer build`, the `dist/` directory contains a fully self-contained static site. Deploy it to any static hosting:
+After running `composer build`, which compiles `public/assets/css/tailwind.css` before the pages (see [Styling](#styling)), the `dist/` directory contains a fully self-contained static site. Deploy it to any static hosting:
 
 **GitHub Pages** -- Push `dist/` to a `gh-pages` branch or configure GitHub Pages to serve from `dist/` on `main`.
 

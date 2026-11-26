@@ -27,7 +27,10 @@
     },
     "scripts": {
         "dev": "php -S localhost:8080 -t public bin/router.php",
-        "build": "php bin/build.php",
+        "build": [
+            "@css",
+            "php bin/build.php"
+        ],
         "css": "sh bin/tailwind.sh"
     },
     "config": {

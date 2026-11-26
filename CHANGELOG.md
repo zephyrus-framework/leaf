@@ -10,7 +10,7 @@ First stable release: nothing breaks before 2.0. What is public, and what is not
 
 In `composer.json`, require `"zephyrus-framework/leaf-core": "^1.0"` (in place of `@dev` or `^0.1`) and remove `"minimum-stability": "dev"` if it is there, then run `composer update`.
 
-Your project has its own copy of the theme, which keeps loading Tailwind from its CDN until you take over the compiled stylesheet: copy `bin/tailwind.sh`, `tailwind.config.js`, `resources/css/tailwind.css` and `public/assets/css/tailwind.css` from this release, add `"css": "sh bin/tailwind.sh"` to the `scripts` of `composer.json`, change `partials/head.latte` as below, then run `composer css`.
+Your project has its own copy of the theme, which keeps loading Tailwind from its CDN until you take over the compiled stylesheet: copy `bin/tailwind.sh`, `tailwind.config.js`, `resources/css/tailwind.css` and `public/assets/css/tailwind.css` from this release, add `"css": "sh bin/tailwind.sh"` to the `scripts` of `composer.json` and make its `"build"` script `["@css", "php bin/build.php"]`, change `partials/head.latte` as below, then run `composer css`.
 
 ### Added
 
@@ -18,7 +18,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 
 ### Changed
 
-- The theme no longer loads Tailwind CSS from its CDN. It ships `public/assets/css/tailwind.css`, compiled with Tailwind CSS 3.4.17 from its templates and scripts with the same colour and font tokens: pages look the same, and no Tailwind script runs. Its classes never go away in 1.x. A template of your site that uses a class the sheet lacks loses that style: run `composer css` in a Composer project, or load the CDN from `templates/partials/head.latte` in a Binary one (see Styling in the README).
+- The theme no longer loads Tailwind CSS from its CDN. It ships `public/assets/css/tailwind.css`, compiled with Tailwind CSS 3.4.17 from its templates and scripts with the same colour and font tokens: pages look the same, and no Tailwind script runs. Its classes never go away in 1.x. In a Composer project, `composer build` compiles it again from your templates before it builds the pages, and `composer css` compiles it alone. In a Binary project, a template that uses a class the sheet lacks needs the CDN, loaded from `templates/partials/head.latte` (see Styling in the README).
 
 ### Fixed
 
