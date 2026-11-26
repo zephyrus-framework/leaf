@@ -27,6 +27,10 @@ function main(): void
     $refusal = null;
 
     try {
+        foreach (markupSinks($root . '/public/assets/js/search.js') as $sink) {
+            $failures[] = "public/assets/js/search.js: uses $sink, which parses markup; build the results with DOM nodes and textContent";
+        }
+
         foreach (['', '/docs'] as $base) {
             $project = "$work/" . ($base === '' ? 'root' : 'docs');
             stageProject($root, $project, $base);
@@ -135,6 +139,24 @@ function stageSingleLocaleProject(string $root, string $project): void
         throw new RuntimeException('could not remove the localization section from config.yml');
     }
     file_put_contents("$project/config.yml", $config);
+}
+
+/**
+ * The DOM APIs of the script that would turn indexed text into markup.
+ *
+ * @return list<string>
+ */
+function markupSinks(string $script): array
+{
+    $source = file_get_contents($script);
+    if ($source === false) {
+        throw new RuntimeException("could not read $script");
+    }
+
+    return array_values(array_filter(
+        ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write'],
+        static fn (string $sink): bool => str_contains($source, $sink)
+    ));
 }
 
 /** @return list<string> */
