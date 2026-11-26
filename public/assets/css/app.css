@@ -520,14 +520,17 @@ body:not(:has(#main-content)) > .skip-link {
     line-height: 1;
 }
 
+/* Ends at the bottom of a short hero and fades out before it, instead of being cut there. */
 .hero-glow {
     position: absolute;
     width: 40rem;
-    height: 40rem;
+    height: min(40rem, 80%);
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle 19.8rem at 50% 20rem, rgba(139, 92, 246, 0.08), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 8rem), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 8rem), transparent);
     pointer-events: none;
 }
 
