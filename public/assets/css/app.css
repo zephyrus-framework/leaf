@@ -334,6 +334,18 @@ body:not(:has(#main-content)) > .skip-link {
     width: auto;
 }
 
+/* Beside an image logo, a site name that does not fit whole wraps onto a clipped line, still read by screen readers. */
+.nav-logo:has(> .nav-logo-img) {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    height: 1.75rem;
+    row-gap: 2rem;
+    overflow: hidden;
+}
+.nav-logo-img + span {
+    line-height: 1.75rem;
+}
+
 .nav-links {
     display: flex;
     align-items: center;
