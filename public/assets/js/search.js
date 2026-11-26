@@ -15,10 +15,10 @@
     var searchIndex = null;
     var indexLoading = false;
     var indexFailed = false;
-    var emptyLabel = resultsContainer ? resultsContainer.getAttribute('data-empty') || 'Type to search the documentation...' : '';
-    var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
-    var loadingLabel = resultsContainer ? resultsContainer.getAttribute('data-loading') || 'Loading search...' : '';
-    var unavailableLabel = resultsContainer ? resultsContainer.getAttribute('data-unavailable') || 'Search is unavailable. Close it and try again.' : '';
+    var emptyLabel = label('data-empty', 'search.empty', 'Type to search the documentation...');
+    var noResultsLabel = label('data-no-results', 'search.no_results', 'No results found for "{query}"');
+    var loadingLabel = label('data-loading', 'search.loading', 'Loading search...');
+    var unavailableLabel = label('data-unavailable', 'search.unavailable', 'Search is unavailable. Close it and try again.');
     var activeIndex = -1;
     var returnFocusTo = null;
     var madeInert = [];
@@ -320,6 +320,13 @@
     }
 
     // ── Helpers ─────────────────────────────────────────────────
+    // A label of the results container, or the English text when it is missing or is its own key, as localize()
+    // leaves a key that the site's locale files lack.
+    function label(attribute, key, fallback) {
+        var text = resultsContainer ? resultsContainer.getAttribute(attribute) : null;
+        return text && text !== key ? text : fallback;
+    }
+
     function loadIndex() {
         if (searchIndex || indexLoading) return;
         indexLoading = true;
