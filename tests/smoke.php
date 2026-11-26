@@ -44,6 +44,10 @@ function main(): void
         }
         if ($build !== null) {
             $failures[] = "[single locale] $build";
+        } else {
+            foreach (untranslatedKeys($project . '/dist') as $message) {
+                $failures[] = "[single locale] $message";
+            }
         }
     } catch (RuntimeException $e) {
         $refusal = $e->getMessage();
@@ -106,7 +110,7 @@ function stageProject(string $root, string $project, string $base): void
 function stageSingleLocaleProject(string $root, string $project): void
 {
     mkdir($project, 0777, true);
-    foreach (['app', 'bin', 'content', 'public'] as $dir) {
+    foreach (['app', 'bin', 'content', 'locale', 'public'] as $dir) {
         copyTree("$root/$dir", "$project/$dir");
     }
     copy("$root/composer.json", "$project/composer.json");
@@ -117,6 +121,26 @@ function stageSingleLocaleProject(string $root, string $project): void
         throw new RuntimeException('could not remove the localization section from config.yml');
     }
     file_put_contents("$project/config.yml", $config);
+}
+
+/** @return list<string> */
+function untranslatedKeys(string $dist): array
+{
+    $found = [];
+    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dist, FilesystemIterator::SKIP_DOTS));
+    foreach ($files as $file) {
+        if ($file->getExtension() !== 'html') {
+            continue;
+        }
+        $html = (string) file_get_contents($file->getPathname());
+        foreach (['search.placeholder', 'not_found.title', 'toc.title'] as $key) {
+            if (str_contains($html, $key)) {
+                $found[] = substr($file->getPathname(), strlen($dist) + 1) . ": the theme key \"$key\" is rendered instead of its text";
+            }
+        }
+    }
+
+    return $found;
 }
 
 function runBuild(string $project): ?string
