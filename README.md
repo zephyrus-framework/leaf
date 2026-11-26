@@ -141,18 +141,20 @@ The header shows it next to the site name, in place of the default mark, and pre
 
 ### Custom Pages
 
-A Latte template at `app/Views/pages/{name}.latte` is built to `/{name}/`. Give its `<main>` the id `main-content`, the target of the theme's "Skip to content" link:
+A Latte template at `app/Views/pages/{name}.latte` is built to `/{name}/`. Give its `<main>` the id `main-content`, the target of the theme's "Skip to content" link, and a top padding taller than the fixed navigation bar (4rem), as `py-32` does here:
 
 ```latte
 {layout '../layouts/landing.latte'}
 
 {block content}
-<main id="main-content" tabindex="-1" class="max-w-3xl mx-auto px-6 pt-28 pb-16">
-    <h1 class="text-3xl font-bold text-bright">About</h1>
+<main id="main-content" tabindex="-1" class="max-w-4xl mx-auto px-6 py-32">
+    <h1 class="text-5xl font-bold text-bright leading-tight mb-6">About</h1>
     <p>A custom page.</p>
 </main>
 {/block}
 ```
+
+Every class of this example is in the theme's compiled stylesheet. A class the theme does not use needs `composer css` in a Composer project, or the Tailwind CDN loaded from `templates/partials/head.latte` in a Binary project: see [Styling](#styling).
 
 ### Theme
 
