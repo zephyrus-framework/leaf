@@ -7,7 +7,7 @@
             <input type="text" class="search-input" id="search-input" placeholder="{localize('search.placeholder')}" aria-label="{localize('search.label')}" autocomplete="off" autofocus>
             <button type="button" class="search-close" onclick="closeSearch()" aria-label="{localize('search.close', ['key' => localize('search.escape')])}"><kbd>{localize('search.escape')}</kbd><span class="search-close-text">{localize('search.close_text')}</span></button>
         </div>
-        <div class="search-results" id="search-results" data-empty="{localize('search.empty')}" data-no-results="{localize('search.no_results')}">
+        <div class="search-results" id="search-results" data-empty="{localize('search.empty')}" data-no-results="{localize('search.no_results')}" data-loading="{localize('search.loading')}" data-unavailable="{localize('search.unavailable')}">
             <div class="search-empty">{localize('search.empty')}</div>
         </div>
         <div class="search-footer">

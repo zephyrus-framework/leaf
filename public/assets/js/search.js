@@ -1,10 +1,10 @@
 /**
  * Client-side search of the site's pages.
  *
- * On first open, loads the index named by the leaf-search-url meta tag (the search.json of the page's locale), then
- * ranks titles, headings and the page text as you type. The first result is preselected: Enter opens it, the up and
- * down arrows move through the results, Escape closes. The field is an ARIA combobox that keeps the focus and names the
- * selected option of the results listbox in aria-activedescendant.
+ * On first open, and on the next one after a failure, loads the index named by the leaf-search-url meta tag (the
+ * search.json of the page's locale), then ranks titles, headings and the page text as you type. The first result is
+ * preselected: Enter opens it, the up and down arrows move through the results, Escape closes. The field is an ARIA
+ * combobox that keeps the focus and names the selected option of the results listbox in aria-activedescendant.
  */
 (function () {
     'use strict';
@@ -13,8 +13,12 @@
     var input = document.getElementById('search-input');
     var resultsContainer = document.getElementById('search-results');
     var searchIndex = null;
+    var indexLoading = false;
+    var indexFailed = false;
     var emptyLabel = resultsContainer ? resultsContainer.getAttribute('data-empty') || 'Type to search the documentation...' : '';
     var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
+    var loadingLabel = resultsContainer ? resultsContainer.getAttribute('data-loading') || 'Loading search...' : '';
+    var unavailableLabel = resultsContainer ? resultsContainer.getAttribute('data-unavailable') || 'Search is unavailable. Close it and try again.' : '';
     var activeIndex = -1;
     var returnFocusTo = null;
     var madeInert = [];
@@ -169,11 +173,19 @@
 
     input.addEventListener('input', runQuery);
 
-    // The results of the field's query, from two characters on and once the index has arrived.
+    // The results of the field's query from two characters on; until the index has arrived, that it is loading or unavailable.
     function runQuery() {
         var query = input.value.trim().toLowerCase();
-        if (query.length < 2 || !searchIndex) {
+        if (indexFailed) {
+            renderMessage(unavailableLabel);
+            return;
+        }
+        if (query.length < 2) {
             renderEmpty();
+            return;
+        }
+        if (!searchIndex) {
+            renderMessage(loadingLabel);
             return;
         }
         var terms = query.split(/\s+/);
@@ -309,14 +321,19 @@
 
     // ── Helpers ─────────────────────────────────────────────────
     function loadIndex() {
-        if (searchIndex) return;
+        if (searchIndex || indexLoading) return;
+        indexLoading = true;
+        indexFailed = false;
         var searchUrl = (document.querySelector('meta[name="leaf-search-url"]') || {}).content;
         if (!searchUrl) {
             var baseUrl = (document.querySelector('meta[name="leaf-base-url"]') || {}).content || '';
             searchUrl = baseUrl + '/search.json';
         }
         fetch(searchUrl)
-            .then(function (r) { return r.json(); })
+            .then(function (r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
             .then(function (data) {
                 searchIndex = data.filter(isSearchableEntry);
                 searchIndex.forEach(function (entry) {
@@ -324,8 +341,14 @@
                     entry.textLower = entry.text.toLowerCase();
                 });
             })
-            .catch(function () { searchIndex = []; })
-            .then(function () { if (input.value.trim() !== '') runQuery(); });
+            .catch(function () {
+                searchIndex = null;
+                indexFailed = true;
+            })
+            .then(function () {
+                indexLoading = false;
+                if (overlay.classList.contains('active')) runQuery();
+            });
     }
 
     // An entry the search can read: a link to this site, string fields and a list of string headings.

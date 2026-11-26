@@ -18,6 +18,8 @@
     "enter": "Entrée",
     "empty": "Tapez quelques lettres pour chercher dans la documentation…",
     "no_results": "Aucun résultat pour « {query} »",
+    "loading": "Chargement de la recherche…",
+    "unavailable": "La recherche est indisponible. Fermez-la et réessayez.",
     "to_navigate": "pour naviguer",
     "to_select": "pour ouvrir"
   },
