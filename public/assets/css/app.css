@@ -231,7 +231,7 @@ code[class*="language-"] {
 }
 .token.inserted { color: #2e9a1b; }
 
-/* ── Utility Overrides (works alongside Tailwind CDN) ──── */
+/* ── Colour Token Classes (also where tailwind.css lacks them) ── */
 .bg-deep { background-color: var(--bg-deep); }
 .bg-surface { background-color: var(--bg-surface); }
 .bg-elevated { background-color: var(--bg-elevated); }
