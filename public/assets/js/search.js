@@ -231,6 +231,7 @@
     function renderMessage(text) {
         resultsContainer.replaceChildren(textBlock('search-empty', text, []));
         setExpanded(false);
+        selectResult(-1);
     }
 
     function renderResults(results, query, terms) {
@@ -252,9 +253,10 @@
             return item;
         }));
         setExpanded(true);
+        selectResult(0);
     }
 
-    // While it holds results, the container is the listbox the field controls, its first option selected.
+    // While it holds results, the container is the listbox the field controls.
     function setExpanded(expanded) {
         input.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         if (expanded) {
@@ -264,7 +266,11 @@
             resultsContainer.removeAttribute('role');
             resultsContainer.removeAttribute('aria-label');
         }
-        activeIndex = expanded ? 0 : -1;
+    }
+
+    // Selects the result at index, or none at -1.
+    function selectResult(index) {
+        activeIndex = index;
         updateActiveItem(resultsContainer.querySelectorAll('.search-result-item'));
     }
 
