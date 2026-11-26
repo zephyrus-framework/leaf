@@ -296,6 +296,7 @@ function checkBuild(Report $report, string $dist, string $englishSource): void
         $isFr = str_starts_with($path, 'fr/');
         $xpath = new DOMXPath($dom);
         checkLinkResolution($report, $path, $xpath, $dist, $base, '//a | //link | //script | //img');
+        checkStylesheets($report, $path, $xpath, $base);
         checkHtmlLang($report, $path, $xpath, $isFr ? 'fr' : 'en');
         checkSearchIndexUrl($report, $path, $xpath, $isFr);
         checkSkipLink($report, $path, $xpath);
@@ -478,6 +479,23 @@ function checkSearchIndexUrl(Report $report, string $page, DOMXPath $xpath, bool
     $url = $xpath->query('//meta[@name="leaf-search-url"]')?->item(0)?->getAttribute('content');
     if ($url !== $expected) {
         $report->fail($page, "the search index URL is '$url', expected '$expected'");
+    }
+}
+
+/** The compiled Tailwind sheet comes after app.css, the order the theme is drawn in, and no page loads Tailwind as a script. */
+function checkStylesheets(Report $report, string $page, DOMXPath $xpath, string $base): void
+{
+    $sheets = [];
+    foreach ($xpath->query('//link[@rel="stylesheet"]/@href') ?: [] as $href) {
+        $sheets[] = $href->nodeValue;
+    }
+    $app = array_search("$base/assets/css/app.css", $sheets, true);
+    $tailwind = array_search("$base/assets/css/tailwind.css", $sheets, true);
+    if ($app === false || $tailwind === false || $tailwind < $app) {
+        $report->fail($page, 'does not link assets/css/tailwind.css after assets/css/app.css');
+    }
+    if ($xpath->evaluate('count(//script[contains(@src, "tailwindcss")])') > 0) {
+        $report->fail($page, 'loads Tailwind CSS as a script');
     }
 }
 
