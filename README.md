@@ -230,7 +230,7 @@ if (window.tailwind) {
 </script>
 ```
 
-A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the inline script in `script-src`, and `'unsafe-inline'` in `style-src` for the styles the script injects.
+Under a Content Security Policy, the CDN needs more than the theme: see [Content Security Policy](#content-security-policy).
 
 ## Commands
 
@@ -251,6 +251,23 @@ After running `composer build`, which compiles `public/assets/css/tailwind.css` 
 **Manual** -- Upload the contents of `dist/` to any web server.
 
 The build also generates a `404.html` at the root of `dist/`, and one per additional locale (`dist/fr/404.html`). GitHub Pages only ever serves the root one, so on a multilingual site its script sends a missing `/fr/...` address to `fr/404.html`; hosts that already serve the nearest `404.html` (the dev server, Cloudflare Pages) show the right language directly. Without JavaScript, the root page links to the other languages.
+
+### Content Security Policy
+
+The theme needs at least this policy:
+
+```text
+default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/ 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/ https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com
+```
+
+- `style-src` needs `'unsafe-inline'` for the `style` attributes of the templates and the `<style>` of the not found page.
+- `script-src` needs `'unsafe-inline'` for the `onclick` handlers of `partials/nav.latte` and `partials/search-modal.latte`, and the inline script of the not found page on a multilingual site. To allow only these, replace it with `'unsafe-hashes'` and their hashes, which hold for the templates of this release (the browser console names the hash of a blocked inline script, not of a handler):
+
+```text
+script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/ 'unsafe-hashes' 'sha256-qH/H5E39wIxy0S0dzFOdTtjGoqGl2zkav3ST5Jahe+Y=' 'sha256-JjHiWisXH6Ri6LHUyipLkvh/qsN//uXo8HDK+o78PHo=' 'sha256-XPTVMpepMRbT3oZt5JJuOgTZEmuNp8ph4q/Ei2iDyK8=' 'sha256-PQDXQfWwRsMDHBmPS8erPYcl65nOrE320RM44JUyGlM=' 'sha256-Q34AdLvljDiSU3tE54gArDSbcMkJP29VHFSJA+TLiBg='
+```
+
+Loading Tailwind from its CDN (see [Styling](#styling)) adds `https://cdn.tailwindcss.com` to `script-src`, with its inline configuration script, which `'unsafe-inline'` already allows (with the hashes above, add its own hash, which the console names). The `'unsafe-inline'` of `style-src` already covers the styles it injects.
 
 ## Versioning
 
