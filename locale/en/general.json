@@ -11,6 +11,7 @@
     "label": "Search documentation",
     "placeholder": "Search documentation...",
     "escape": "Esc",
+    "close": "{key}, close search",
     "enter": "Enter",
     "empty": "Type to search the documentation...",
     "no_results": "No results found for \"{query}\"",

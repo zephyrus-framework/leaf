@@ -11,6 +11,7 @@
     "label": "Rechercher dans la documentation",
     "placeholder": "Rechercher dans la documentation…",
     "escape": "Échap",
+    "close": "{key}, fermer la recherche",
     "enter": "Entrée",
     "empty": "Tapez quelques lettres pour chercher dans la documentation…",
     "no_results": "Aucun résultat pour « {query} »",
