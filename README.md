@@ -199,6 +199,14 @@ After running `composer build`, the `dist/` directory contains a fully self-cont
 
 The build also generates a `404.html` at the root of `dist/`, and one per additional locale (`dist/fr/404.html`). GitHub Pages only ever serves the root one, so on a multilingual site its script sends a missing `/fr/...` address to `fr/404.html`; hosts that already serve the nearest `404.html` (the dev server, Cloudflare Pages) show the right language directly. Without JavaScript, the root page links to the other languages.
 
+## Versioning
+
+Leaf follows semantic versioning since 1.0.0: nothing breaks before 2.0. The full policy is on [Versioning and stability](https://leaf.ophelios.com/getting-started/versioning/), and each release is in [CHANGELOG.md](CHANGELOG.md).
+
+- **Public**: the configuration, the names of the templates Leaf renders and the variables each one receives.
+- **Not public**: the markup inside the theme's templates, the classes of `app.css` and the theme's JavaScript. A template you override belongs to your site; the changelog names each template, stylesheet or script a release changes and what an override must take over.
+- **Styling**: throughout 1.x the theme loads Tailwind CSS v3 in the browser with its colour and font tokens, so a template can use any Tailwind v3 utility class.
+
 ## License
 
 MIT
