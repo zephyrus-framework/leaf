@@ -9,6 +9,9 @@ const LOCALES = ['en', 'fr'];
 const SLUGS = ['introduction', 'writing-content', 'deployment'];
 const FR_MARKER = 'Marqueur-francais-0451';
 const AUTHOR_LINKS = "\n[doc](/getting-started/deployment/) [home](/) [asset](/assets/css/app.css)\n";
+const TABLE = "\n| Key | Default |\n|---|---|\n| `name` | `My Project` |\n";
+const TABLE_PAGES = ['getting-started/writing-content/index.html', 'fr/getting-started/introduction/index.html'];
+const PROSE = "//*[contains(concat(' ', normalize-space(@class), ' '), ' prose ')]";
 const LOGO = '/assets/smoke-logo.svg';
 const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary, .error-link-secondary';
 
@@ -49,6 +52,9 @@ function main(): void
         } else {
             foreach (untranslatedKeys($project . '/dist') as $message) {
                 $failures[] = "[single locale] $message";
+            }
+            if (str_contains((string) file_get_contents($project . '/dist/404.html'), 'data-locales=')) {
+                $failures[] = '[single locale] 404.html: carries the language redirect of a multilingual site';
             }
         }
     } catch (RuntimeException $e) {
@@ -110,9 +116,9 @@ function stageProject(string $root, string $project, string $base): void
     mkdir("$project/content/fr/getting-started", 0777, true);
     file_put_contents(
         "$project/content/fr/getting-started/introduction.md",
-        "---\ntitle: Introduction\norder: 1\n---\n\n# Introduction\n\n" . FR_MARKER . "\n" . AUTHOR_LINKS
+        "---\ntitle: Introduction\norder: 1\n---\n\n# Introduction\n\n" . FR_MARKER . "\n" . AUTHOR_LINKS . TABLE
     );
-    file_put_contents("$project/content/getting-started/writing-content.md", AUTHOR_LINKS, FILE_APPEND);
+    file_put_contents("$project/content/getting-started/writing-content.md", AUTHOR_LINKS . TABLE, FILE_APPEND);
 }
 
 function stageSingleLocaleProject(string $root, string $project): void
@@ -171,6 +177,8 @@ function checkBuild(Report $report, string $dist, string $englishSource): void
         $xpath = new DOMXPath($dom);
         checkLinkResolution($report, $path, $xpath, $dist, $base, '//a | //link | //script | //img');
         checkHtmlLang($report, $path, $xpath, $isFr ? 'fr' : 'en');
+        checkSkipLink($report, $path, $xpath);
+        checkTables($report, $path, $xpath);
         checkThemeElements($report, $path, $dom);
         checkThemeLinks($report, $path, $dom, $base, $isFr);
         checkLanguageSwitcher($report, $path, $dom, $base, $isFr ? 'fr' : 'en');
@@ -178,10 +186,14 @@ function checkBuild(Report $report, string $dist, string $englishSource): void
 
     checkContent($report, $pages, $dist, $englishSource);
     checkAuthorLinks($report, $pages);
+    checkNotFoundLanguageRedirect($report, $pages);
 }
 
-/** Root-relative doc links and the home link in Markdown keep the page locale, assets never get one. */
-/** @param array<string, DOMDocument> $pages */
+/**
+ * Root-relative doc links and the home link in Markdown keep the page locale, assets never get one.
+ *
+ * @param array<string, DOMDocument> $pages
+ */
 function checkAuthorLinks(Report $report, array $pages): void
 {
     $base = $report->base;
@@ -196,12 +208,61 @@ function checkAuthorLinks(Report $report, array $pages): void
         }
         $hrefs = array_map(
             fn (DOMNode $a): string => $a instanceof DOMElement ? $a->getAttribute('href') : '',
-            iterator_to_array((new DOMXPath($pages[$page]))->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' prose ')]//a") ?: [], false),
+            iterator_to_array((new DOMXPath($pages[$page]))->query(PROSE . '//a') ?: [], false),
         );
         foreach ([$doc, $home, "$base/assets/css/app.css"] as $url) {
             if (!in_array($url, $hrefs, true)) {
                 $report->fail($page, "Markdown link $url is missing or rewritten (found: " . implode(' ', $hrefs) . ')');
             }
+        }
+    }
+}
+
+/** The first element of the body skips to the page's only <main id="main-content">. */
+function checkSkipLink(Report $report, string $page, DOMXPath $xpath): void
+{
+    $first = $xpath->query('/html/body/*[1]')?->item(0);
+    if (!$first instanceof DOMElement || $first->getAttribute('class') !== 'skip-link' || $first->getAttribute('href') !== '#main-content') {
+        $report->fail($page, 'the first element of <body> is not the skip link to #main-content');
+    }
+    $targets = $xpath->query('//*[@id="main-content"]');
+    if ($targets === false || $targets->length !== 1 || $targets->item(0)?->nodeName !== 'main') {
+        $report->fail($page, 'the skip link target is not a single <main id="main-content">');
+    }
+}
+
+/** Every table of the page body sits directly in its sideways scrolling frame. */
+function checkTables(Report $report, string $page, DOMXPath $xpath): void
+{
+    $tables = $xpath->query(PROSE . '//table') ?: [];
+    if (in_array($page, TABLE_PAGES, true) && count($tables) === 0) {
+        $report->fail($page, 'the staged Markdown table is missing');
+    }
+    foreach ($tables as $table) {
+        $frame = $table->parentNode;
+        if (!$frame instanceof DOMElement || $frame->getAttribute('class') !== 'table-scroll') {
+            $report->fail($page, 'a table is not the child of a .table-scroll frame');
+        }
+    }
+}
+
+/**
+ * Each not found page sends a missing path under another locale to that locale's 404.html.
+ *
+ * @param array<string, DOMDocument> $pages
+ */
+function checkNotFoundLanguageRedirect(Report $report, array $pages): void
+{
+    foreach (['404.html', 'fr/404.html'] as $page) {
+        if (!isset($pages[$page])) {
+            continue;
+        }
+        $script = (new DOMXPath($pages[$page]))->query('//head/script[@data-locales]')?->item(0);
+        if (!$script instanceof DOMElement
+            || $script->getAttribute('data-locales') !== 'fr'
+            || $script->getAttribute('data-base-url') !== $report->base
+            || !str_contains($script->textContent, 'location.replace(target)')) {
+            $report->fail($page, "lacks the language redirect for locales 'fr' under base '{$report->base}'");
         }
     }
 }
