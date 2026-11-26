@@ -3,6 +3,18 @@
 {var $notFound = true}
 
 {block head}
+<script n:if="count($supportedLocales) > 1" data-base-url="{$leafBaseUrl}" data-locales="{implode(' ', array_diff($supportedLocales, [$defaultLocale]))}">
+// Hosts that answer every missing path with the root 404.html (GitHub Pages) get the page in the language of the URL.
+(function (script) {
+    var base = script.getAttribute('data-base-url');
+    var path = location.pathname;
+    var locale = path.indexOf(base + '/') === 0 ? path.slice(base.length + 1).split('/')[0] : '';
+    var target = base + '/' + locale + '/404.html';
+    if (locale !== document.documentElement.lang && script.getAttribute('data-locales').split(' ').indexOf(locale) !== -1 && path !== target) {
+        location.replace(target);
+    }
+})(document.currentScript);
+</script>
 <style>
     .error-container { min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-height) + 1.5rem) 1.5rem 2rem; }
     .error-code { font-size: 8rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
