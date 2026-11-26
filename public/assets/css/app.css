@@ -652,7 +652,7 @@ code[class*="language-"] {
     min-height: 100vh;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1179px) {
     .docs-layout {
         grid-template-columns: var(--sidebar-width) 1fr;
     }
