@@ -1,22 +1,25 @@
 /**
  * Sidebar scroll-to-active, TOC scroll tracking, and mobile navigation.
  *
- * 1. Scrolls the sidebar so the active link is visible on page load.
+ * 1. Scrolls the sidebar (never the page) so the active link is centred in it on page load.
  * 2. Tracks scroll position to highlight the current heading in the TOC.
  * 3. Handles mobile hamburger menu and sidebar drawer.
  */
 (function () {
     'use strict';
 
-    // ── Sidebar: scroll active link into view ──────────────────
-    var activeLink = document.querySelector('.sidebar-link.active');
+    var drawerQuery = window.matchMedia('(max-width: 768px)');
+
+    // ── Sidebar: centre the active link ────────────────────────
+    // Only the sidebar's own scrollTop moves: scrollIntoView would also scroll the page and move the Tab start point.
+    var activeLink = document.querySelector('.docs-sidebar .sidebar-link.active');
     if (activeLink) {
-        var sidebar = document.querySelector('.docs-sidebar');
-        if (sidebar) {
-            setTimeout(function () {
-                activeLink.scrollIntoView({ block: 'center', behavior: 'instant' });
-            }, 50);
-        }
+        setTimeout(function () {
+            if (drawerQuery.matches) return;
+            var sidebar = activeLink.closest('.docs-sidebar');
+            var linkBox = activeLink.getBoundingClientRect();
+            sidebar.scrollTop += linkBox.top - sidebar.getBoundingClientRect().top - (sidebar.clientHeight - linkBox.height) / 2;
+        }, 50);
     }
 
     // ── TOC: scroll-spy for heading tracking ───────────────────
