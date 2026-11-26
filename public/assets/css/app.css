@@ -1570,3 +1570,10 @@ body:not(:has(#main-content)) > .skip-link {
         grid-template-columns: 1fr;
     }
 }
+
+/* Touch on a narrow screen: the 44px targets of the search button and the theme toggle beside it do not overlap. */
+@media (max-width: 768px) and (pointer: coarse) {
+    .nav-links .search-trigger {
+        margin-inline-end: 0.375rem;
+    }
+}
