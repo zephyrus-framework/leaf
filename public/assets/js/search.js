@@ -153,22 +153,20 @@
             renderEmpty();
             return;
         }
-        var results = search(query);
-        renderResults(results, query);
+        var terms = query.split(/\s+/);
+        renderResults(search(terms), query, terms);
     });
 
     // ── Search logic ───────────────────────────────────────────
-    function search(query) {
+    function search(terms) {
         if (!searchIndex) return [];
 
-        var terms = query.split(/\s+/);
         var scored = [];
 
         searchIndex.forEach(function (entry) {
             var score = 0;
             var titleLower = entry.title.toLowerCase();
             var excerptLower = entry.excerpt.toLowerCase();
-            var contentLower = entry.contentLower;
             var headingsLower = entry.headings.map(function (h) { return h.toLowerCase(); });
 
             terms.forEach(function (term) {
@@ -185,7 +183,7 @@
                 // Excerpt match (low weight), else a match further down the page (lowest weight).
                 if (excerptLower.indexOf(term) !== -1) {
                     score += 10;
-                } else if (contentLower.indexOf(term) !== -1) {
+                } else if (entry.textLower.indexOf(term) !== -1) {
                     score += 3;
                 }
 
@@ -205,32 +203,52 @@
     }
 
     // ── Rendering ──────────────────────────────────────────────
+    // Index values only ever reach the page as text nodes and checked attribute values, never as markup.
     function renderEmpty() {
         activeIndex = -1;
-        resultsContainer.innerHTML =
-            '<div class="search-empty">' + escapeHtml(emptyLabel) + '</div>';
+        renderMessage(emptyLabel);
     }
 
-    function renderResults(results, query) {
+    function renderMessage(text) {
+        resultsContainer.replaceChildren(textBlock('search-empty', text, []));
+    }
+
+    function renderResults(results, query, terms) {
         activeIndex = -1;
 
         if (results.length === 0) {
-            resultsContainer.innerHTML =
-                '<div class="search-empty">' + escapeHtml(noResultsLabel).replace('{query}', function () { return escapeHtml(query); }) + '</div>';
+            renderMessage(noResultsLabel.replace('{query}', function () { return query; }));
             return;
         }
 
-        var html = '';
-        results.forEach(function (entry) {
-            var sectionLabel = entry.section.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-            html +=
-                '<a href="' + entry.url.replace(/\/?$/, '/') + '" class="search-result-item">' +
-                '<div class="search-result-title">' + highlight(entry.title, query) + '</div>' +
-                '<div class="search-result-section">' + sectionLabel + '</div>' +
-                '<div class="search-result-excerpt">' + highlight(snippet(entry, query), query) + '</div>' +
-                '</a>';
-        });
-        resultsContainer.innerHTML = html;
+        resultsContainer.replaceChildren.apply(resultsContainer, results.map(function (entry) {
+            var item = document.createElement('a');
+            item.className = 'search-result-item';
+            item.setAttribute('href', entry.url.replace(/\/?$/, '/'));
+            item.appendChild(textBlock('search-result-title', entry.title, terms));
+            item.appendChild(textBlock('search-result-section', entry.section.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }), []));
+            item.appendChild(textBlock('search-result-excerpt', snippet(entry, terms), terms));
+            return item;
+        }));
+    }
+
+    // A block of text with every occurrence of the terms in a <mark>, the longest term first where several start.
+    function textBlock(className, text, terms) {
+        var block = document.createElement('div');
+        block.className = className;
+        var longestFirst = terms.slice().sort(function (a, b) { return b.length - a.length; });
+        var pattern = terms.length > 0 ? new RegExp(longestFirst.map(escapeRegex).join('|'), 'gi') : null;
+        var last = 0;
+        var match;
+        while (pattern && (match = pattern.exec(text)) !== null) {
+            block.appendChild(document.createTextNode(text.slice(last, match.index)));
+            var mark = document.createElement('mark');
+            mark.textContent = match[0];
+            block.appendChild(mark);
+            last = pattern.lastIndex;
+        }
+        block.appendChild(document.createTextNode(text.slice(last)));
+        return block;
     }
 
     function updateActiveItem(items) {
@@ -255,44 +273,54 @@
         fetch(searchUrl)
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                data.forEach(function (entry) { entry.contentLower = (entry.content || '').toLowerCase(); });
-                searchIndex = data;
+                searchIndex = data.filter(function (entry) { return isSiteUrl(entry.url); });
+                searchIndex.forEach(function (entry) {
+                    entry.text = (entry.content || '').replace(/\s+/g, ' ').trim();
+                    entry.textLower = entry.text.toLowerCase();
+                });
             })
             .catch(function () { searchIndex = []; });
     }
 
-    function highlight(text, query) {
-        var terms = query.split(/\s+/).filter(function (t) { return t.length > 0; });
-        if (terms.length === 0) return escapeHtml(text);
-
-        var escaped = escapeHtml(text);
-        terms.forEach(function (term) {
-            var re = new RegExp('(' + escapeRegex(escapeHtml(term)) + ')', 'gi');
-            escaped = escaped.replace(re, '<mark style="background:var(--accent-glow);color:var(--accent-light);padding:0 2px;border-radius:2px;">$1</mark>');
-        });
-        return escaped;
+    // A path on this site: one leading slash, never a second one (or a backslash) that would make it protocol-relative.
+    function isSiteUrl(url) {
+        if (typeof url !== 'string' || !/^\/(?![\/\\])/.test(url)) return false;
+        try {
+            return new URL(url, location.href).origin === location.origin;
+        } catch (e) {
+            return false;
+        }
     }
 
     function truncate(str, len) {
-        return str.length > len ? str.substring(0, len) + '...' : str;
+        return str.length > len ? str.substring(0, len) + '…' : str;
+    }
+
+    function containsTerm(text, terms) {
+        var lower = text.toLowerCase();
+        return terms.some(function (t) { return lower.indexOf(t) !== -1; });
+    }
+
+    // The earliest match of a term in the page text, as { at, length }, or null.
+    function firstMatch(entry, terms) {
+        var found = null;
+        terms.forEach(function (t) {
+            var i = entry.textLower.indexOf(t);
+            if (i !== -1 && (found === null || i < found.at)) found = { at: i, length: t.length };
+        });
+        return found;
     }
 
     // The excerpt, or when no term shows in it, about SNIPPET_LENGTH characters of the page text around the first match.
-    function snippet(entry, query) {
+    function snippet(entry, terms) {
         var excerpt = truncate(entry.excerpt, SNIPPET_LENGTH);
-        var terms = query.split(/\s+/).filter(function (t) { return t.length > 0; });
-        var excerptLower = excerpt.toLowerCase();
-        if (!entry.content || terms.some(function (t) { return excerptLower.indexOf(t) !== -1; })) return excerpt;
+        if (entry.text === '' || containsTerm(excerpt, terms)) return excerpt;
 
-        var text = entry.content.replace(/\s+/g, ' ').trim();
-        var textLower = text.toLowerCase();
-        var at = -1;
-        var length = 0;
-        terms.forEach(function (t) {
-            var i = textLower.indexOf(t);
-            if (i !== -1 && (at === -1 || i < at)) { at = i; length = t.length; }
-        });
-        if (at === -1) return excerpt;
+        var text = entry.text;
+        var match = firstMatch(entry, terms);
+        if (match === null) return excerpt;
+        var at = match.at;
+        var length = match.length;
 
         var start = Math.max(0, at - Math.floor((SNIPPET_LENGTH - length) / 2));
         var end = Math.min(text.length, start + SNIPPET_LENGTH);
@@ -306,12 +334,6 @@
             end = wordEnd >= at + length ? wordEnd : end;
         }
         return (start > 0 ? '…' : '') + text.substring(start, end).trim() + (end < text.length ? '…' : '');
-    }
-
-    function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
     }
 
     function escapeRegex(str) {

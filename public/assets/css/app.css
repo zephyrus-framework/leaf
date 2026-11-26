@@ -1291,6 +1291,15 @@ code[class*="language-"] {
     line-height: 1.4;
 }
 
+/* The tint reaches past the letters without moving them, so a match inside a word leaves no gap. */
+.search-results mark {
+    margin: 0 -2px;
+    padding: 0 2px;
+    background: var(--accent-glow);
+    border-radius: 2px;
+    color: var(--accent-light);
+}
+
 .search-empty {
     padding: 2rem 1rem;
     text-align: center;
