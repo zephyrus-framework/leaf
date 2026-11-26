@@ -167,23 +167,23 @@
         updateActiveItem(items, true);
     });
 
-    // Search on input.
-    input.addEventListener('input', function () {
+    input.addEventListener('input', runQuery);
+
+    // The results of the field's query, from two characters on and once the index has arrived.
+    function runQuery() {
         var query = input.value.trim().toLowerCase();
-        if (query.length < 2) {
+        if (query.length < 2 || !searchIndex) {
             renderEmpty();
             return;
         }
         var terms = query.split(/\s+/);
         renderResults(search(terms), query, terms);
-    });
+    }
 
     // ── Search logic ───────────────────────────────────────────
     // Entries carrying more of the terms come first, then the highest score. A term in the title weighs most; elsewhere
     // a whole word weighs more than a word start or a part of a word, and the page text counts up to ten occurrences.
     function search(terms) {
-        if (!searchIndex) return [];
-
         var scored = [];
 
         searchIndex.forEach(function (entry) {
@@ -318,7 +318,8 @@
                     entry.textLower = entry.text.toLowerCase();
                 });
             })
-            .catch(function () { searchIndex = []; });
+            .catch(function () { searchIndex = []; })
+            .then(function () { if (input.value.trim() !== '') runQuery(); });
     }
 
     // A path on this site: one leading slash, never a second one (or a backslash) that would make it protocol-relative.
