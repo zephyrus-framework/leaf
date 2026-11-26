@@ -220,7 +220,7 @@ function distPages(string $dist): array
 
 function checkExpectedFiles(Report $report, string $dist): void
 {
-    $expected = ['index.html', 'fr/index.html', '404.html', 'fr/404/index.html', 'search.json', 'fr/search.json'];
+    $expected = ['index.html', 'fr/index.html', '404.html', 'fr/404.html', 'search.json', 'fr/search.json'];
     foreach (SLUGS as $slug) {
         $expected[] = "getting-started/$slug/index.html";
         $expected[] = "fr/getting-started/$slug/index.html";
@@ -291,7 +291,7 @@ function checkThemeElements(Report $report, string $page, DOMDocument $dom): voi
         $required[] = '.sidebar-link';
         $required[] = '.pagination-link';
     }
-    if (in_array($page, ['404.html', 'fr/404/index.html'], true)) {
+    if (in_array($page, ['404.html', 'fr/404.html'], true)) {
         $required[] = '.error-link-primary';
     }
     foreach ($required as $selector) {
