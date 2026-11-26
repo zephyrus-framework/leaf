@@ -2,8 +2,8 @@
  * Copy-to-clipboard buttons for code blocks.
  *
  * Wraps each <pre> inside the .prose container with a wrapper div and adds a
- * copy button. Clicking the button copies the code text to the clipboard and
- * shows a brief "Copied!" confirmation.
+ * copy button. Clicking the button copies the code text to the clipboard,
+ * shows a brief check mark and announces the copy to screen readers.
  */
 (function () {
     'use strict';
@@ -11,8 +11,16 @@
     var labels = document.currentScript ? document.currentScript.dataset : {};
     var copyTitle = labels.labelCopy || 'Copy code';
     var copyLabel = labels.labelCopyAria || 'Copy code to clipboard';
+    var copiedLabel = labels.labelCopied || 'Code copied to clipboard';
+    var blocks = document.querySelectorAll('.prose pre');
+    if (!blocks.length) return;
 
-    document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var status = document.createElement('div');
+    status.className = 'copy-code-status';
+    status.setAttribute('role', 'status');
+    document.body.appendChild(status);
+
+    blocks.forEach(function (pre) {
         var wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
         pre.parentNode.insertBefore(wrapper, pre);
@@ -39,8 +47,10 @@
                     '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">' +
                     '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>' +
                     '</svg>';
+                status.textContent = copiedLabel;
 
                 setTimeout(function () {
+                    status.textContent = '';
                     btn.classList.remove('copied');
                     btn.innerHTML =
                         '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">' +

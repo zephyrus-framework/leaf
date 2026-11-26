@@ -25,7 +25,8 @@
   },
   "code": {
     "copy": "Copier le code",
-    "copy_label": "Copier le code dans le presse-papiers"
+    "copy_label": "Copier le code dans le presse-papiers",
+    "copied": "Code copié dans le presse-papiers"
   },
   "sidebar": {
     "powered_by": "Propulsé par"

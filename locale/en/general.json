@@ -25,7 +25,8 @@
   },
   "code": {
     "copy": "Copy code",
-    "copy_label": "Copy code to clipboard"
+    "copy_label": "Copy code to clipboard",
+    "copied": "Code copied to clipboard"
   },
   "sidebar": {
     "powered_by": "Powered by"
