@@ -395,9 +395,10 @@
             && entry.headings.every(function (heading) { return typeof heading === 'string'; });
     }
 
-    // A path on this site: one leading slash, never a second one (or a backslash) that would make it protocol-relative.
+    // A path on this site: one leading slash, never a second one (or a backslash) that would make it protocol-relative,
+    // and no tab or line break, which URL parsing drops.
     function isSiteUrl(url) {
-        if (typeof url !== 'string' || !/^\/(?![\/\\])/.test(url)) return false;
+        if (typeof url !== 'string' || !/^\/(?![\/\\])/.test(url) || /[\t\n\r]/.test(url)) return false;
         try {
             return new URL(url, location.href).origin === location.origin;
         } catch (e) {
