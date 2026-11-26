@@ -19,6 +19,7 @@ leaf:
   name: "My Project"
   version: "1.0.0"
   description: "A documentation site powered by Zephyrus Leaf."
+  logo: ""
   github_url: ""
   content_path: "content"
   sections:

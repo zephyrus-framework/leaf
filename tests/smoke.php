@@ -9,6 +9,7 @@ const LOCALES = ['en', 'fr'];
 const SLUGS = ['introduction', 'writing-content', 'deployment'];
 const FR_MARKER = 'Marqueur-francais-0451';
 const AUTHOR_LINKS = "\n[doc](/getting-started/deployment/) [home](/) [asset](/assets/css/app.css)\n";
+const LOGO = '/assets/smoke-logo.svg';
 const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary, .error-link-secondary';
 
 main();
@@ -99,7 +100,12 @@ function stageProject(string $root, string $project, string $base): void
     if ($count !== 1) {
         throw new RuntimeException('could not set supported_locales in config.yml');
     }
+    $config = preg_replace('/^(\s*logo:).*$/m', '$1 "' . LOGO . '"', (string) $config, 1, $count);
+    if ($count !== 1) {
+        throw new RuntimeException('could not set logo in config.yml');
+    }
     file_put_contents("$project/config.yml", $config);
+    file_put_contents("$project/public" . LOGO, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"/>');
 
     mkdir("$project/content/fr/getting-started", 0777, true);
     file_put_contents(
@@ -286,7 +292,7 @@ function checkHtmlLang(Report $report, string $page, DOMXPath $xpath, string $ex
 /** Every page must render the theme elements its layout requires. */
 function checkThemeElements(Report $report, string $page, DOMDocument $dom): void
 {
-    $required = ['.nav-logo'];
+    $required = ['.nav-logo', '.nav-logo-img'];
     if (preg_match('#^(fr/)?getting-started/#', $page) === 1) {
         $required[] = '.sidebar-link';
         $required[] = '.pagination-link';
