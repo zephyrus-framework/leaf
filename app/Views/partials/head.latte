@@ -1,15 +1,19 @@
+{var $siteName = $leafName ?? ''}
+{var $pageName = $title ?? ''}
+{var $documentTitle = $pageName === '' || $pageName === $siteName ? $siteName : ($siteName === '' ? $pageName : $pageName . ' · ' . $siteName)}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{$documentTitle}</title>
 <meta name="leaf-base-url" content="{$leafBaseUrl}">
 <meta name="leaf-search-url" content="{$leafBaseUrl}{if ($currentLocale ?? '') !== '' && ($currentLocale ?? '') !== ($defaultLocale ?? '')}/{$currentLocale}{/if}/search.json">
 <meta n:if="($pageDescription ?? '') !== ''" name="description" content="{$pageDescription}">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="{($notFound ?? false) ? 'noindex' : 'index, follow'}">
 <meta property="og:type" content="article">
-<meta property="og:title" content="{$title ?? ''} — {$leafName ?? ''}">
+<meta property="og:title" content="{$documentTitle}">
 <meta n:if="($pageDescription ?? '') !== ''" property="og:description" content="{$pageDescription}">
-<meta property="og:site_name" content="{$leafName ?? ''}">
+<meta property="og:site_name" content="{$siteName}">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="{$title ?? ''} — {$leafName ?? ''}">
+<meta name="twitter:title" content="{$documentTitle}">
 <meta n:if="($pageDescription ?? '') !== ''" name="twitter:description" content="{$pageDescription}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
