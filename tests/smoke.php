@@ -199,6 +199,7 @@ function checkBuild(Report $report, string $dist, string $englishSource): void
         $xpath = new DOMXPath($dom);
         checkLinkResolution($report, $path, $xpath, $dist, $base, '//a | //link | //script | //img');
         checkHtmlLang($report, $path, $xpath, $isFr ? 'fr' : 'en');
+        checkSearchIndexUrl($report, $path, $xpath, $isFr);
         checkSkipLink($report, $path, $xpath);
         checkTables($report, $path, $xpath);
         checkThemeElements($report, $path, $dom);
@@ -372,10 +373,20 @@ function checkHtmlLang(Report $report, string $page, DOMXPath $xpath, string $ex
     }
 }
 
+/** Every page loads the search index of its own locale. */
+function checkSearchIndexUrl(Report $report, string $page, DOMXPath $xpath, bool $isFr): void
+{
+    $expected = $report->base . ($isFr ? '/fr' : '') . '/search.json';
+    $url = $xpath->query('//meta[@name="leaf-search-url"]')?->item(0)?->getAttribute('content');
+    if ($url !== $expected) {
+        $report->fail($page, "the search index URL is '$url', expected '$expected'");
+    }
+}
+
 /** Every page must render the theme elements its layout requires. */
 function checkThemeElements(Report $report, string $page, DOMDocument $dom): void
 {
-    $required = ['.nav-logo', '.nav-logo-img'];
+    $required = ['.nav-logo', '.nav-logo-img', '.search-trigger', '.search-overlay'];
     if (preg_match('#^(fr/)?getting-started/#', $page) === 1) {
         $required[] = '.sidebar-link';
         $required[] = '.pagination-link';
