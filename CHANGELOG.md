@@ -26,6 +26,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - Beside a logo, a site name that does not fit is hidden instead of cut, and screen readers still read it. A wide logo scales down instead of being squeezed.
 - The landing hero glow fades out instead of ending on a hard edge.
 - In the search dialog, the first result is preselected, so Enter opens it.
+- The search dialog footer says "Enter to open" in English, as it does in French, instead of "Enter to select".
 - In the search dialog, an accent bar marks the selected result, which its tint alone did not set apart from the others.
 - The search field is an ARIA combobox and its results a listbox, so screen readers announce the selected result. The focus stays in the field: Tab no longer stops on the results.
 - In the search dialog, the pointer moves the selection to the result it hovers, so one result only is highlighted at a time.
