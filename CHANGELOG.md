@@ -18,7 +18,7 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 
 ### Changed
 
-- The theme no longer loads Tailwind CSS from its CDN. It ships `public/assets/css/tailwind.css`, compiled with Tailwind CSS 3.4.17 from its templates and scripts with the same colour and font tokens: pages look the same, and no Tailwind script runs. Its classes never go away in 1.x. In a Composer project, `composer build` compiles it again from your templates and Markdown pages before it builds the pages, and `composer css` compiles it alone. In a Binary project, a template or a Markdown page that uses a class the sheet lacks needs the CDN, loaded from `templates/partials/head.latte` (see Styling in the README).
+- The theme no longer loads Tailwind CSS from its CDN. It ships `public/assets/css/tailwind.css`, compiled with Tailwind CSS 3.4.17 from its templates and scripts with the same colour and font tokens: pages look the same, and no Tailwind script runs. Its classes never go away in 1.x. In a Composer project, `composer build` compiles it again from your templates and Markdown pages before it builds the pages, and `composer css` compiles it alone. Both need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`, and download the standalone Tailwind CSS CLI from GitHub on their first run (into `~/.cache/leaf`, checked against the SHA-256 pinned in `bin/tailwind.sh`). In a Binary project, a template or a Markdown page that uses a class the sheet lacks needs the CDN, loaded from `templates/partials/head.latte` (see Styling in the README).
 
 ### Fixed
 

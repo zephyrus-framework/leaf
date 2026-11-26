@@ -217,7 +217,7 @@ The theme ships its Tailwind CSS classes compiled, in `public/assets/css/tailwin
 
 A template or a Markdown page of your site that uses a class the sheet lacks:
 
-- **Composer project**: `composer build` compiles the sheet again before it builds the pages, and `composer css` compiles it alone, for `composer dev`; commit `public/assets/css/tailwind.css`. Both compile it from `app/Views/**/*.latte`, the `class` attributes of `content/**/*.md` and `public/assets/js/**/*.js`, with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. They need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
+- **Composer project**: `composer build` compiles the sheet again before it builds the pages, and `composer css` compiles it alone, for `composer dev`; commit `public/assets/css/tailwind.css`. Both compile it from `app/Views/**/*.latte`, the `class` attributes of `content/**/*.md` and `public/assets/js/**/*.js`, with the standalone Tailwind CSS CLI (no Node.js), downloaded once from GitHub into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. They need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
 - **Binary project**: the CLI ships the theme's sheet as it is. Load Tailwind in the browser from your `templates/partials/head.latte` (a copy of the theme's), after the stylesheet links, or link your own stylesheet from there:
 
 ```html
