@@ -1024,12 +1024,21 @@ code[class*="language-"] {
     }
 }
 
-/* Tables */
+/* Tables: a wide one scrolls in its own frame, the empty caption keeps a narrow one at full width. */
 .prose table {
+    display: block;
+    overflow-x: auto;
+    container-type: inline-size;
     width: 100%;
     border-collapse: collapse;
     margin: 0 0 1.25rem;
     font-size: 0.8125rem;
+}
+.prose table::after {
+    content: "";
+    display: table-caption;
+    caption-side: bottom;
+    width: 100cqw;
 }
 
 .prose th {
