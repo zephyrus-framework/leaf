@@ -1106,6 +1106,9 @@ code[class*="language-"] {
 .table-scroll th {
     background: color-mix(in srgb, var(--bg-elevated) 50%, transparent);
 }
+.table-scroll[tabindex] th {
+    white-space: nowrap;
+}
 
 .prose td {
     padding: 0.5rem 0.75rem;
