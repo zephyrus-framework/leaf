@@ -15,6 +15,7 @@
     var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
     var activeIndex = -1;
     var returnFocusTo = null;
+    var madeInert = [];
     var SNIPPET_LENGTH = 120;
 
     if (!overlay || !input || !resultsContainer) return;
@@ -26,6 +27,7 @@
         overlay.classList.add('active');
         input.value = '';
         input.focus();
+        setPageInert(true);
         renderEmpty();
         loadIndex();
     };
@@ -33,11 +35,42 @@
     window.closeSearch = function () {
         if (!overlay.classList.contains('active')) return;
         overlay.classList.remove('active');
+        setPageInert(false);
         activeIndex = -1;
         input.blur();
         restoreFocus(returnFocusTo);
         returnFocusTo = null;
     };
+
+    // While the search is open, everything around it leaves the tab order and the accessibility tree.
+    function setPageInert(inert) {
+        if (!inert) {
+            madeInert.forEach(function (el) { el.removeAttribute('inert'); });
+            madeInert = [];
+            return;
+        }
+        for (var node = overlay; node !== document.body && node.parentElement; node = node.parentElement) {
+            Array.prototype.forEach.call(node.parentElement.children, function (sibling) {
+                if (sibling === node || sibling.tagName === 'SCRIPT' || sibling.hasAttribute('inert')) return;
+                sibling.setAttribute('inert', '');
+                madeInert.push(sibling);
+            });
+        }
+    }
+
+    // Tab and Shift+Tab wrap around the dialog's controls.
+    function keepTabInDialog(e) {
+        var controls = overlay.querySelectorAll('input, button, a[href]');
+        var first = controls[0];
+        var last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
 
     // A return point that can no longer take focus (a menu closed meanwhile) hands it to the control of its
     // collapsed container (aria-controls), else to the search button.
@@ -75,6 +108,11 @@
             return;
         }
 
+        if (e.key === 'Tab') {
+            keepTabInDialog(e);
+            return;
+        }
+
         var items = resultsContainer.querySelectorAll('.search-result-item');
 
         if (e.key === 'ArrowDown') {
@@ -89,6 +127,7 @@
             e.preventDefault();
             var href = items[activeIndex].getAttribute('href');
             if (href) {
+                window.closeSearch();
                 window.location.href = href;
             }
         }
@@ -99,6 +138,12 @@
         if (e.target === overlay) {
             window.closeSearch();
         }
+    });
+
+    // A result followed in this tab closes the search first, so the page Back returns to is not left inert.
+    resultsContainer.addEventListener('click', function (e) {
+        if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+        if (e.target.closest('.search-result-item')) window.closeSearch();
     });
 
     // Search on input.
