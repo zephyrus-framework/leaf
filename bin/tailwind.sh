@@ -6,22 +6,26 @@
 set -eu
 
 version=3.4.17
-assets='tailwindcss-linux-x64 tailwindcss-linux-arm64 tailwindcss-macos-x64 tailwindcss-macos-arm64 tailwindcss-windows-x64.exe'
+# One line per release asset: its name, then its SHA-256.
+pinned='tailwindcss-linux-x64 7d24f7fa191d2193b78cd5f5a42a6093e14409521908529f42d80b11fde1f1d4
+tailwindcss-linux-arm64 69b1378b8133192d7d2feb12a116fa12d035594f58db3eff215879e4ad8cf39b
+tailwindcss-macos-x64 6cbdad74be776c087ffa5e9a057512c54898f9fe8828d3362212dfe32fc933a3
+tailwindcss-macos-arm64 a1d0c7985759accca0bf12e51ac1dcbf0f6cf2fffb62e6e0f62d091c477a10a3
+tailwindcss-windows-x64.exe 67f1c5e3f5a03406a7bf5badf5ada09b79f3ae78ec43450c15f7e983068da346'
 
 fail() {
     echo "tailwind: $1" >&2
     exit 1
 }
 
+# The pinned SHA-256 of an asset; fails for an asset that has none.
 pinned_sum() {
-    case $1 in
-        tailwindcss-linux-x64) echo 7d24f7fa191d2193b78cd5f5a42a6093e14409521908529f42d80b11fde1f1d4 ;;
-        tailwindcss-linux-arm64) echo 69b1378b8133192d7d2feb12a116fa12d035594f58db3eff215879e4ad8cf39b ;;
-        tailwindcss-macos-x64) echo 6cbdad74be776c087ffa5e9a057512c54898f9fe8828d3362212dfe32fc933a3 ;;
-        tailwindcss-macos-arm64) echo a1d0c7985759accca0bf12e51ac1dcbf0f6cf2fffb62e6e0f62d091c477a10a3 ;;
-        tailwindcss-windows-x64.exe) echo 67f1c5e3f5a03406a7bf5badf5ada09b79f3ae78ec43450c15f7e983068da346 ;;
-        *) return 1 ;;
-    esac
+    printf '%s\n' "$pinned" | awk -v asset="$1" '$1 == asset { print $2; found = 1 } END { exit !found }'
+}
+
+# Succeeds when the SHA-256 is the one of a pinned asset.
+is_pinned_sum() {
+    printf '%s\n' "$pinned" | awk -v sum="$1" '$2 == sum { found = 1 } END { exit !found }'
 }
 
 platform_asset() {
@@ -65,13 +69,7 @@ if [ -n "${TAILWIND_BIN:-}" ]; then
     bin=$TAILWIND_BIN
     [ -f "$bin" ] || fail "TAILWIND_BIN ($bin) is not a file"
     sum=$(sha256_of "$bin")
-    known=no
-    for asset in $assets; do
-        if [ "$(pinned_sum "$asset")" = "$sum" ]; then
-            known=yes
-        fi
-    done
-    [ "$known" = yes ] || fail "TAILWIND_BIN ($bin) is not one of the Tailwind CSS $version binaries pinned in bin/tailwind.sh (its SHA-256 is $sum)"
+    is_pinned_sum "$sum" || fail "TAILWIND_BIN ($bin) is not one of the Tailwind CSS $version binaries pinned in bin/tailwind.sh (its SHA-256 is $sum)"
     case $bin in
         /*) ;;
         *) bin=$(pwd)/$bin ;;
