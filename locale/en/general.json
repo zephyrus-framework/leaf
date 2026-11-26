@@ -4,7 +4,8 @@
     "search": "Search",
     "theme": "Toggle theme",
     "theme_to_light": "Switch to light mode",
-    "theme_to_dark": "Switch to dark mode"
+    "theme_to_dark": "Switch to dark mode",
+    "language": "{code}, language: {language}"
   },
   "search": {
     "label": "Search documentation",

@@ -79,8 +79,11 @@
     // Rewrite option hrefs so switching keeps the user on the current page
     // (stripped of the base path and any locale prefix) rather than sending them back to root.
     document.addEventListener('DOMContentLoaded', function () {
-        var host = document.querySelector('.lang-switcher');
-        if (!host || host.getAttribute('data-locale-homes') === 'true') return;
+        document.querySelectorAll('.lang-switcher').forEach(keepCurrentPage);
+    });
+
+    function keepCurrentPage(host) {
+        if (host.getAttribute('data-locale-homes') === 'true') return;
         var supported = Array.prototype.map.call(
             host.querySelectorAll('.lang-switcher-option'),
             function (a) { return a.getAttribute('data-locale'); },
@@ -112,5 +115,5 @@
             if (!loc) return;
             a.href = basePath + (loc === defaultLocale ? '' : '/' + loc) + withTrailingSlash(stripped);
         });
-    });
+    }
 })();

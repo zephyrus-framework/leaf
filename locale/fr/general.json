@@ -4,7 +4,8 @@
     "search": "Rechercher",
     "theme": "Changer de thème",
     "theme_to_light": "Passer au thème clair",
-    "theme_to_dark": "Passer au thème sombre"
+    "theme_to_dark": "Passer au thème sombre",
+    "language": "{code}, langue\u00a0: {language}"
   },
   "search": {
     "label": "Rechercher dans la documentation",
