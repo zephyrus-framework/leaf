@@ -42,7 +42,7 @@ final class PagesController extends Controller
 
         $title = ucwords(str_replace('-', ' ', $page));
         return $this->render('pages/' . $page, [
-            'title' => $title . ' · ' . $this->leafConfig->name,
+            'title' => $title,
             'pageTitle' => $title,
             'pagePath' => '/' . $page,
         ]);
