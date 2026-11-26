@@ -154,7 +154,7 @@ A Latte template at `app/Views/pages/{name}.latte` is built to `/{name}/`. Give 
 {/block}
 ```
 
-Every class of this example is in the theme's compiled stylesheet. A class the theme does not use needs `composer css` in a Composer project, or the Tailwind CDN loaded from `templates/partials/head.latte` in a Binary project: see [Styling](#styling).
+Every class of this example is in the theme's compiled stylesheet. A class the theme does not use is compiled into it by `composer build` in a Composer project (by `composer css` alone, for `composer dev`), and needs the Tailwind CDN loaded from `templates/partials/head.latte` in a Binary project: see [Styling](#styling).
 
 ### Theme
 
@@ -298,7 +298,7 @@ Leaf follows semantic versioning since 1.0.0: nothing breaks before 2.0. The ful
 
 - **Public**: the configuration, the names of the templates Leaf renders and the variables each one receives.
 - **Not public**: the markup inside the theme's templates, the classes of `app.css` and the theme's JavaScript. A template you override belongs to your site; the changelog names each template, stylesheet or script a release changes and what an override must take over.
-- **Styling**: the theme's compiled Tailwind stylesheet never loses a class in 1.x, its colour and font tokens stay, and so do the CSS properties listed in [Theme](#theme). For a class it lacks, see [Styling](#styling).
+- **Styling**: the theme stays on Tailwind CSS 3 for all of 1.x, its compiled stylesheet never loses a class, its colour and font tokens stay, and so do the CSS properties listed in [Theme](#theme). For a class it lacks, see [Styling](#styling).
 
 ## License
 
