@@ -160,48 +160,47 @@
     });
 
     // ── Search logic ───────────────────────────────────────────
+    // Entries carrying more of the terms come first, then the highest score. A term in the title weighs most; elsewhere
+    // a whole word weighs more than a word start or a part of a word, and the page text counts up to ten occurrences.
     function search(terms) {
         if (!searchIndex) return [];
 
         var scored = [];
 
         searchIndex.forEach(function (entry) {
+            var found = 0;
             var score = 0;
             var titleLower = entry.title.toLowerCase();
             var excerptLower = entry.excerpt.toLowerCase();
-            var headingsLower = entry.headings.map(function (h) { return h.toLowerCase(); });
 
             terms.forEach(function (term) {
-                // Title match (high weight).
-                if (titleLower.indexOf(term) !== -1) {
-                    score += titleLower === term ? 100 : 50;
-                }
-
-                // Heading match (medium weight).
-                headingsLower.forEach(function (h) {
-                    if (h.indexOf(term) !== -1) score += 20;
-                });
-
-                // Excerpt match (low weight), else a match further down the page (lowest weight).
-                if (excerptLower.indexOf(term) !== -1) {
-                    score += 10;
-                } else if (entry.textLower.indexOf(term) !== -1) {
-                    score += 3;
-                }
-
-                // Section match.
-                if (entry.section.indexOf(term) !== -1) {
-                    score += 5;
-                }
+                var termScore = titleLower === term ? 100 : (titleLower.indexOf(term) !== -1 ? 50 : 0);
+                entry.headings.forEach(function (h) { termScore += 20 * occurrences(h.toLowerCase(), term, 1); });
+                termScore += Math.max(10 * occurrences(excerptLower, term, 1), 3 * occurrences(entry.textLower, term, 10));
+                termScore += 5 * occurrences(entry.section, term, 1);
+                if (termScore > 0) found++;
+                score += termScore;
             });
 
-            if (score > 0) {
-                scored.push({ entry: entry, score: score });
+            if (found > 0) {
+                scored.push({ entry: entry, found: found, score: score });
             }
         });
 
-        scored.sort(function (a, b) { return b.score - a.score; });
+        scored.sort(function (a, b) { return b.found - a.found || b.score - a.score; });
         return scored.slice(0, 10).map(function (s) { return s.entry; });
+    }
+
+    // The occurrences of the term in the lowercase text, counted up to max: a whole word counts 1, a word start 0.5,
+    // a part of a word 0.25.
+    function occurrences(lower, term, max) {
+        var count = 0;
+        for (var at = lower.indexOf(term); at !== -1 && count < max; at = lower.indexOf(term, at + 1)) {
+            var startsWord = !ALPHANUMERIC.test(lower.charAt(at - 1));
+            var endsWord = !ALPHANUMERIC.test(lower.charAt(at + term.length));
+            count += startsWord ? (endsWord ? 1 : 0.5) : 0.25;
+        }
+        return Math.min(count, max);
     }
 
     // ── Rendering ──────────────────────────────────────────────
