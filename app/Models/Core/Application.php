@@ -23,7 +23,6 @@ final class Application extends Kernel
         }
         if ($class === PagesController::class) {
             return new PagesController(
-                $this->leafConfig,
                 $this->contentLoader,
             );
         }

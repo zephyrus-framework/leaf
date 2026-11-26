@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use Leaf\Config\LeafConfig;
 use Leaf\Content\ContentLoader;
 use Leaf\PageDiscovery;
 use Zephyrus\Controller\Controller;
@@ -24,7 +23,6 @@ final class PagesController extends Controller
     use RenderResponses;
 
     public function __construct(
-        private readonly LeafConfig $leafConfig,
         private readonly ContentLoader $contentLoader,
     ) {
     }
