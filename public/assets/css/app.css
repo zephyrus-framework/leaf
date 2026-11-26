@@ -332,6 +332,8 @@ body:not(:has(#main-content)) > .skip-link {
 .nav-logo-img {
     height: 28px;
     width: auto;
+    object-fit: contain;
+    object-position: left center;
 }
 
 /* Beside an image logo, a site name that does not fit whole wraps onto a clipped line, still read by screen readers. */
