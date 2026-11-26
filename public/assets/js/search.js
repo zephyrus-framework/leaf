@@ -1,7 +1,7 @@
 /**
  * Client-side fuzzy search for documentation.
  *
- * Loads /docs/search.json on first open, then filters results as you type.
+ * Loads /docs/search.json on first open, then filters results as you type, matching titles, headings and the page text.
  * Supports keyboard navigation (up/down arrows, Enter, Escape).
  */
 (function () {
@@ -15,6 +15,7 @@
     var noResultsLabel = resultsContainer ? resultsContainer.getAttribute('data-no-results') || 'No results found for "{query}"' : '';
     var activeIndex = -1;
     var returnFocusTo = null;
+    var SNIPPET_LENGTH = 120;
 
     if (!overlay || !input || !resultsContainer) return;
 
@@ -107,6 +108,7 @@
             var score = 0;
             var titleLower = entry.title.toLowerCase();
             var excerptLower = entry.excerpt.toLowerCase();
+            var contentLower = entry.contentLower;
             var headingsLower = entry.headings.map(function (h) { return h.toLowerCase(); });
 
             terms.forEach(function (term) {
@@ -120,9 +122,11 @@
                     if (h.indexOf(term) !== -1) score += 20;
                 });
 
-                // Excerpt match (low weight).
+                // Excerpt match (low weight), else a match further down the page (lowest weight).
                 if (excerptLower.indexOf(term) !== -1) {
                     score += 10;
+                } else if (contentLower.indexOf(term) !== -1) {
+                    score += 3;
                 }
 
                 // Section match.
@@ -163,7 +167,7 @@
                 '<a href="' + entry.url.replace(/\/?$/, '/') + '" class="search-result-item">' +
                 '<div class="search-result-title">' + highlight(entry.title, query) + '</div>' +
                 '<div class="search-result-section">' + sectionLabel + '</div>' +
-                '<div class="search-result-excerpt">' + highlight(truncate(entry.excerpt, 120), query) + '</div>' +
+                '<div class="search-result-excerpt">' + highlight(snippet(entry, query), query) + '</div>' +
                 '</a>';
         });
         resultsContainer.innerHTML = html;
@@ -190,7 +194,10 @@
         }
         fetch(searchUrl)
             .then(function (r) { return r.json(); })
-            .then(function (data) { searchIndex = data; })
+            .then(function (data) {
+                data.forEach(function (entry) { entry.contentLower = (entry.content || '').toLowerCase(); });
+                searchIndex = data;
+            })
             .catch(function () { searchIndex = []; });
     }
 
@@ -208,6 +215,37 @@
 
     function truncate(str, len) {
         return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    // The excerpt, or when no term shows in it, about SNIPPET_LENGTH characters of the page text around the first match.
+    function snippet(entry, query) {
+        var excerpt = truncate(entry.excerpt, SNIPPET_LENGTH);
+        var terms = query.split(/\s+/).filter(function (t) { return t.length > 0; });
+        var excerptLower = excerpt.toLowerCase();
+        if (!entry.content || terms.some(function (t) { return excerptLower.indexOf(t) !== -1; })) return excerpt;
+
+        var text = entry.content.replace(/\s+/g, ' ').trim();
+        var textLower = text.toLowerCase();
+        var at = -1;
+        var length = 0;
+        terms.forEach(function (t) {
+            var i = textLower.indexOf(t);
+            if (i !== -1 && (at === -1 || i < at)) { at = i; length = t.length; }
+        });
+        if (at === -1) return excerpt;
+
+        var start = Math.max(0, at - Math.floor((SNIPPET_LENGTH - length) / 2));
+        var end = Math.min(text.length, start + SNIPPET_LENGTH);
+        start = Math.max(0, Math.min(start, end - SNIPPET_LENGTH));
+        if (start > 0) {
+            var wordStart = text.indexOf(' ', start - 1) + 1;
+            start = wordStart > 0 && wordStart <= at ? wordStart : start;
+        }
+        if (end < text.length) {
+            var wordEnd = text.lastIndexOf(' ', end);
+            end = wordEnd >= at + length ? wordEnd : end;
+        }
+        return (start > 0 ? '…' : '') + text.substring(start, end).trim() + (end < text.length ? '…' : '');
     }
 
     function escapeHtml(str) {
