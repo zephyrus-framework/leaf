@@ -228,7 +228,7 @@ if (window.tailwind) {
 </script>
 ```
 
-A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the inline script in `script-src`.
+A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the inline script in `script-src`, and `'unsafe-inline'` in `style-src` for the styles the script injects.
 
 ## Commands
 
