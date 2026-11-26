@@ -1327,6 +1327,7 @@ body:not(:has(#main-content)) > .skip-link {
 }
 
 .search-result-item {
+    position: relative;
     display: block;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -1336,6 +1337,16 @@ body:not(:has(#main-content)) > .skip-link {
 .search-result-item:hover,
 .search-result-item.active {
     background: var(--bg-elevated);
+}
+/* A border rather than a background, so that forced colours keep the bar. */
+.search-result-item.active::before {
+    content: "";
+    position: absolute;
+    top: 0.625rem;
+    bottom: 0.625rem;
+    left: 0.25rem;
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
 }
 
 .search-result-title {
