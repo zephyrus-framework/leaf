@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Leaf\Config\LeafConfig;
+use Leaf\Content\ContentLoader;
 use Leaf\PageDiscovery;
 use Zephyrus\Controller\Controller;
 use Zephyrus\Http\Response;
@@ -24,6 +25,7 @@ final class PagesController extends Controller
 
     public function __construct(
         private readonly LeafConfig $leafConfig,
+        private readonly ContentLoader $contentLoader,
     ) {
     }
 
@@ -32,7 +34,10 @@ final class PagesController extends Controller
     {
         $viewPath = ROOT_DIR . '/app/Views/pages/' . $page . '.latte';
         if (!is_file($viewPath)) {
-            return $this->render('404', ['title' => 'Page Not Found'], 404);
+            return $this->render('404', [
+                'title' => 'Page Not Found',
+                'firstPage' => $this->contentLoader->getAllPages()[0] ?? null,
+            ], 404);
         }
 
         $title = ucwords(str_replace('-', ' ', $page));

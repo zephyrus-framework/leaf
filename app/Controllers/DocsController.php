@@ -47,6 +47,7 @@ final class DocsController extends Controller
         if ($page === null) {
             return $this->render('404', [
                 'title' => 'Page Not Found',
+                'firstPage' => $this->contentLoader->getAllPages()[0] ?? null,
             ], 404);
         }
 
@@ -134,6 +135,7 @@ final class DocsController extends Controller
     {
         return $this->render('404', [
             'title' => 'Page Not Found',
+            'firstPage' => $this->contentLoader->getAllPages()[0] ?? null,
         ]);
     }
 }
