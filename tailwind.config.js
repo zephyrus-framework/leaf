@@ -1,6 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./app/Views/**/*.latte', './public/assets/js/**/*.js'],
+    content: {
+        files: ['./app/Views/**/*.latte', './content/**/*.md', './public/assets/js/**/*.js'],
+        // Only the class attributes of a Markdown page: its prose would add a class for each word that names one.
+        extract: {
+            md: (markdown) => Array.from(
+                markdown.matchAll(/\bclass\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g),
+                (match) => (match[1] ?? match[2] ?? match[3]).split(/\s+/),
+            ).flat(),
+        },
+    },
     theme: {
         extend: {
             colors: {

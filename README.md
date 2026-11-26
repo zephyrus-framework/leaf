@@ -192,9 +192,9 @@ Additional Prism.js languages can be added in `app/Views/layouts/docs.latte`:
 
 The theme ships its Tailwind CSS classes compiled, in `public/assets/css/tailwind.css` (Tailwind CSS 3.4.17), linked right after `app.css`. It holds the classes the theme's templates and scripts use, with the colour tokens (`deep`, `surface`, `elevated`, `border`, `border-accent`, `body`, `bright`, `muted`, `accent`, `accent-light`, `accent-fill`, `accent-fill-hover`, `accent-glow`) and the fonts (`font-body`, `font-mono`). No page loads Tailwind as a script.
 
-A template of your site that uses a class the sheet lacks:
+A template or a Markdown page of your site that uses a class the sheet lacks:
 
-- **Composer project**: `composer build` compiles the sheet again before it builds the pages, and `composer css` compiles it alone, for `composer dev`; commit `public/assets/css/tailwind.css`. Both compile it from `app/Views/**/*.latte` and `public/assets/js/**/*.js` with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. They need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
+- **Composer project**: `composer build` compiles the sheet again before it builds the pages, and `composer css` compiles it alone, for `composer dev`; commit `public/assets/css/tailwind.css`. Both compile it from `app/Views/**/*.latte`, the `class` attributes of `content/**/*.md` and `public/assets/js/**/*.js`, with the standalone Tailwind CSS CLI (no Node.js), downloaded once into `~/.cache/leaf` and checked against the SHA-256 pinned in `bin/tailwind.sh`. They need `sh`, `curl` or `wget`, and `sha256sum` or `shasum`. `composer css -- --watch` compiles again on every change.
 - **Binary project**: the CLI ships the theme's sheet as it is. Load Tailwind in the browser from your `templates/partials/head.latte` (a copy of the theme's), after the stylesheet links, or link your own stylesheet from there:
 
 ```html
@@ -237,7 +237,7 @@ A Content Security Policy must then allow `https://cdn.tailwindcss.com` and the 
 ```bash
 composer dev     # Start dev server with live-reload (localhost:8080)
 composer build   # Compile public/assets/css/tailwind.css, then generate static HTML to dist/
-composer css     # Compile public/assets/css/tailwind.css again from the templates and scripts
+composer css     # Compile public/assets/css/tailwind.css again from the templates, Markdown pages and scripts
 ```
 
 ## Deployment

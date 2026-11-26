@@ -1,6 +1,6 @@
 #!/bin/sh
-# Compiles public/assets/css/tailwind.css from the templates and scripts, with the standalone
-# Tailwind CSS CLI downloaded once into the user cache and checked against the SHA-256 pinned below.
+# Compiles public/assets/css/tailwind.css from the templates, Markdown pages and scripts, with the
+# standalone Tailwind CSS CLI downloaded once into the user cache and checked against the SHA-256 pinned below.
 # Usage: sh bin/tailwind.sh [tailwindcss options, such as --watch]
 # TAILWIND_BIN: a binary to run instead of the download; it must be one of the pinned binaries.
 set -eu
