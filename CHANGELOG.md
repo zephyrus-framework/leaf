@@ -36,14 +36,19 @@ Your project has its own copy of the theme, which keeps loading Tailwind from it
 - In the page content, an inline code longer than the line wraps instead of running out of the column, which made a narrow screen scroll sideways. Code blocks and the code in tables keep scrolling.
 - Search ranks pages carrying every term first, and whole words above parts of words.
 
+### Security
+
+- The Prism scripts and stylesheet loaded from cdnjs carry their Subresource Integrity hash, so a browser refuses a copy altered on the CDN. The Syntax Highlighting example of the README carries one too.
+
 ### What an override must take over
 
 A template, stylesheet or script your site overrides belongs to your site. Take over these changes in yours (templates live under `app/Views/` in a Composer project, `templates/` in a Binary one):
 
-- `partials/head.latte`: in place of the `cdn.tailwindcss.com` script and the inline `tailwind.config` script after it, `<link rel="stylesheet" href="{$leafBaseUrl}/assets/css/tailwind.css">` right after the `app.css` link (after it, so that its rules still win over `app.css` as the CDN's did). An override that keeps the CDN keeps working.
+- `partials/head.latte`: in place of the `cdn.tailwindcss.com` script and the inline `tailwind.config` script after it, `<link rel="stylesheet" href="{$leafBaseUrl}/assets/css/tailwind.css">` right after the `app.css` link (after it, so that its rules still win over `app.css` as the CDN's did). An override that keeps the CDN keeps working. On the Prism stylesheet link, `integrity` and `crossorigin="anonymous"`.
 - `partials/nav.latte`: `{default bool $showSearch = $docsMode}` at the top, `{if $showSearch}` around the search button; keep the `<span>` of the site name right after the logo `<img class="nav-logo-img">`, which the stylesheet targets.
 - `partials/search-modal.latte`: `data-loading` and `data-unavailable` on `#search-results`, with the new `search.loading` and `search.unavailable` labels, which a site with its own `locale/` files adds to them.
-- `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script.
+- `layouts/landing.latte`: `class="landing-layout"` on `<body>`, a `<div class="landing-content">` around `{block content}{/block}`, `showSearch: true` on the nav include, then `{include '../partials/search-modal.latte'}` and the `search.js` script; `integrity` and `crossorigin="anonymous"` on each Prism script.
+- `layouts/docs.latte`: `integrity` and `crossorigin="anonymous"` on each Prism script.
 - `public/assets/css/app.css`: `object-fit` and `object-position` on `.nav-logo-img`, the `.nav-logo:has(> .nav-logo-img)` and `.nav-logo-img + span` rules, the `.landing-layout` and `.landing-content` rules, the new `.hero-glow`, `position: relative` on `.search-result-item` with the new `.search-result-item.active::before`, `.search-result-item:hover` taken out of the rule that highlights `.search-result-item.active`, and the new `.prose code:not(pre code, td code, th code)`.
 - `public/assets/js/search.js`: `search()` and `occurrences()`; for the combobox, the four attributes set on the field after the elements are looked up, `renderEmpty()`, `renderMessage()`, `renderResults()` (with the `id`, `role` and `tabindex` of each result), the new `setExpanded()` and `selectResult()`, `updateActiveItem()` and the selector of `keepTabInDialog()`; the new `mousemove` listener on the results, which moves the selection; `runQuery()`, the input listener now named; `loadIndex()`, with the new `isSearchableEntry()` and the new `loadingLabel`, `unavailableLabel`, `indexLoading` and `indexFailed` declared at the top.
 

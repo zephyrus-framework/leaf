@@ -181,7 +181,7 @@ The theme's labels (search, pagination, table of contents, 404 page) are read wi
 Additional Prism.js languages can be added in `app/Views/layouts/docs.latte`:
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js" integrity="sha512-R/HpMlNfZZV6DxMhNz1dYJbBaPBVSOCqX8imo3uGUurhPDHRcXrBxkEVOjawwUwTMfOqT6t1eLYYQXIjFWCX/A==" crossorigin="anonymous"></script>
 ```
 
 ## Styling
