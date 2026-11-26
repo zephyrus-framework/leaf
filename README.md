@@ -158,23 +158,46 @@ Every class of this example is in the theme's compiled stylesheet. A class the t
 
 ### Theme
 
-The design system is defined as CSS custom properties in `public/assets/css/app.css`:
+The design system is defined as CSS custom properties in `public/assets/css/app.css`, dark by default and light when the system or the theme button picks it:
 
-| Token | Default | Usage |
-|---|---|---|
-| `--bg-deep` | `#08080d` | Page background |
-| `--bg-surface` | `#11111a` | Sidebar, cards, code blocks |
-| `--bg-elevated` | `#1a1a27` | Hover states |
-| `--accent` | `#8b5cf6` | Primary accent (violet) |
-| `--accent-light` | `#a78bfa` | Hover accent |
-| `--accent-fill` | `#7c3aed` | Filled button background, under white text |
-| `--accent-fill-hover` | `#6d28d9` | Filled button hover |
-| `--text` | `#d4d4d8` | Body text |
-| `--text-bright` | `#fafafa` | Headings |
-| `--font-body` | Inter | Body font |
-| `--font-mono` | JetBrains Mono | Code font |
+| Property | Dark | Light | Usage |
+|---|---|---|---|
+| `--bg-deep` | `#08080d` | `#ffffff` | Page background |
+| `--bg-surface` | `#11111a` | `#f8f8fa` | Sidebar, cards, code blocks |
+| `--bg-elevated` | `#1a1a27` | `#f0f0f4` | Hover states |
+| `--border` | `#1e1e2e` | `#e4e4e8` | Borders and dividers |
+| `--border-accent` | `rgba(139, 92, 246, 0.3)` | `rgba(139, 92, 246, 0.25)` | Border of a hovered control or card |
+| `--accent` | `#8b5cf6` | `#7c3aed` | Primary accent (violet): borders, accent bars and `.text-accent` |
+| `--accent-light` | `#a78bfa` | `#6d28d9` | Links, inline code, active and hovered items |
+| `--accent-glow` | `rgba(139, 92, 246, 0.15)` | `rgba(139, 92, 246, 0.08)` | Tint of the active link, search matches and hovered cards |
+| `--accent-fill` | `#7c3aed` | `#7c3aed` | Filled button background, under white text |
+| `--accent-fill-hover` | `#6d28d9` | `#6d28d9` | Filled button hover |
+| `--text` | `#d4d4d8` | `#3f3f46` | Body text |
+| `--text-bright` | `#fafafa` | `#18181b` | Headings |
+| `--text-muted` | `#8a8a94` | `#65656e` | Secondary text and labels |
+| `--font-body` | Inter | Inter | Body font |
+| `--font-mono` | JetBrains Mono | JetBrains Mono | Code font |
 
 These properties are public: none is renamed or removed in 1.x. The rest of `app.css` is not (see [Versioning](#versioning)).
+
+To change them, set them in a stylesheet of your own linked after `app.css` in `partials/head.latte`, under the three selectors `app.css` uses, which stay in 1.x. `:root` alone is not enough: in the light mode the system picks, `app.css` sets them again with a more specific selector.
+
+```css
+:root {
+    --accent: #38bdf8;
+    --accent-light: #7dd3fc;
+}
+[data-theme="light"] {
+    --accent: #0369a1;
+    --accent-light: #0369a1;
+}
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        --accent: #0369a1;
+        --accent-light: #0369a1;
+    }
+}
+```
 
 ### Interface Text and Languages
 
