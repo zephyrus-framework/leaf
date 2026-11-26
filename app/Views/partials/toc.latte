@@ -1,6 +1,6 @@
 <aside class="docs-toc" n:if="isset($toc) && count($toc) > 0" aria-labelledby="toc-title">
     <div class="toc-wrapper">
-        <h4 class="toc-title" id="toc-title">{localize('toc.title')}</h4>
+        <p class="toc-title" id="toc-title">{localize('toc.title')}</p>
         <ul class="toc-links">
             {foreach $toc as $heading}
             <li class="toc-item{if ($heading['level'] ?? 2) > 2} toc-item-sub{/if}">
