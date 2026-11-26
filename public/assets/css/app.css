@@ -993,6 +993,11 @@ body:not(:has(#main-content)) > .skip-link {
     color: var(--accent-light);
     white-space: nowrap;
 }
+/* Outside a table, which scrolls, a code longer than the line wraps instead of leaving the column. */
+.prose code:not(pre code, td code, th code) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
 
 /* Code blocks */
 .prose pre {
