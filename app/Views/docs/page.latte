@@ -6,7 +6,7 @@
         {$content|noescape}
     </div>
 
-    <nav class="docs-pagination" n:if="$prevPage || $nextPage">
+    <nav class="docs-pagination" n:if="$prevPage || $nextPage" aria-label="{localize('pagination.label')}">
         {if $prevPage}
         <a href="{$leafBaseUrl}{$localePrefix}/{$prevPage['section']}/{$prevPage['slug']}/" class="pagination-link pagination-prev">
             <span class="pagination-label">&larr; {localize('pagination.previous')}</span>

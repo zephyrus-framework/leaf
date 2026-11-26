@@ -1,5 +1,6 @@
 {
   "nav": {
+    "label": "Site",
     "menu": "Toggle menu",
     "search": "Search",
     "theme": "Toggle theme",
@@ -22,6 +23,7 @@
     "title": "On this page"
   },
   "pagination": {
+    "label": "Previous and next pages",
     "previous": "Previous",
     "next": "Next"
   },

@@ -1,5 +1,6 @@
 {
   "nav": {
+    "label": "Site",
     "menu": "Afficher ou masquer le menu",
     "search": "Rechercher",
     "theme": "Changer de thème",
@@ -22,6 +23,7 @@
     "title": "Sur cette page"
   },
   "pagination": {
+    "label": "Page précédente et page suivante",
     "previous": "Précédent",
     "next": "Suivant"
   },
