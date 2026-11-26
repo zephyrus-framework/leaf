@@ -113,9 +113,9 @@ html.theme-transition *::after {
 [data-theme="light"] .token.url { color: #cf222e; }
 [data-theme="light"] .token.atrule,
 [data-theme="light"] .token.attr-value,
-[data-theme="light"] .token.keyword { color: #8250df; }
+[data-theme="light"] .token.keyword { color: #7741dc; }
 [data-theme="light"] .token.function,
-[data-theme="light"] .token.class-name { color: #8250df; }
+[data-theme="light"] .token.class-name { color: #7741dc; }
 [data-theme="light"] .token.regex,
 [data-theme="light"] .token.important,
 [data-theme="light"] .token.variable { color: #953800; }
@@ -152,9 +152,9 @@ html.theme-transition *::after {
     :root:not([data-theme="dark"]) .token.url { color: #cf222e; }
     :root:not([data-theme="dark"]) .token.atrule,
     :root:not([data-theme="dark"]) .token.attr-value,
-    :root:not([data-theme="dark"]) .token.keyword { color: #8250df; }
+    :root:not([data-theme="dark"]) .token.keyword { color: #7741dc; }
     :root:not([data-theme="dark"]) .token.function,
-    :root:not([data-theme="dark"]) .token.class-name { color: #8250df; }
+    :root:not([data-theme="dark"]) .token.class-name { color: #7741dc; }
     :root:not([data-theme="dark"]) .token.regex,
     :root:not([data-theme="dark"]) .token.important,
     :root:not([data-theme="dark"]) .token.variable { color: #953800; }
@@ -636,10 +636,14 @@ code[class*="language-"] {
 }
 .footer-link {
     color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
     transition: color 0.15s ease;
 }
 .footer-link:hover {
     color: var(--accent-light);
+    text-decoration-thickness: 2px;
 }
 
 /* ── Docs Layout ──────────────────────────────────────────── */
