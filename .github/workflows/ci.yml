@@ -36,3 +36,22 @@ jobs:
 
       - name: Smoke test
         run: php tests/smoke.php
+
+  stylesheet:
+    name: Compiled stylesheet
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Compile the Tailwind stylesheet
+        run: sh bin/tailwind.sh
+
+      - name: Check the committed stylesheet is the compiled one
+        run: |
+          git diff --exit-code --stat -- public/assets/css/tailwind.css || {
+            echo '::error file=public/assets/css/tailwind.css::Out of date: run composer css and commit public/assets/css/tailwind.css.'
+            exit 1
+          }
