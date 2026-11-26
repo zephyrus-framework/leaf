@@ -154,7 +154,7 @@ function markupSinks(string $script): array
     }
 
     return array_values(array_filter(
-        ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write'],
+        ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'DOMParser', 'createContextualFragment', 'setHTMLUnsafe', 'parseHTMLUnsafe', 'srcdoc'],
         static fn (string $sink): bool => str_contains($source, $sink)
     ));
 }
