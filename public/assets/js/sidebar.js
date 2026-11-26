@@ -85,6 +85,11 @@
     var navToggle = document.querySelector('.nav-toggle');
     if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
 
+    // The page under the open drawer leaves the accessibility tree, not only the tab order.
+    function setPageInert(inert) {
+        document.querySelectorAll('.docs-main, .docs-toc').forEach(function (el) { el.toggleAttribute('inert', inert); });
+    }
+
     window.toggleNav = function () {
         var sidebar = document.querySelector('.docs-sidebar');
         var overlay = document.querySelector('.sidebar-overlay');
@@ -98,6 +103,7 @@
             if (closeIcon) closeIcon.style.display = isActive ? 'block' : 'none';
             if (navToggle) navToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
             document.body.style.overflow = isActive ? 'hidden' : '';
+            setPageInert(isActive);
             if (isActive) {
                 var target = sidebar.querySelector('.sidebar-link.active') || sidebar.querySelector('a[href]');
                 if (target) target.focus();
@@ -117,6 +123,7 @@
         if (closeIcon) closeIcon.style.display = 'none';
         if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
+        setPageInert(false);
     };
 
     // Escape closes the drawer and returns focus to its button, unless a layer above it took the key or is still open.
@@ -146,10 +153,8 @@
         });
     });
 
-    // Close sidebar on window resize if going back to desktop
-    window.addEventListener('resize', function () {
-        if (window.innerWidth > 768) {
-            closeSidebar();
-        }
+    // Close the drawer when the window grows past the drawer breakpoint.
+    drawerQuery.addEventListener('change', function (e) {
+        if (!e.matches) closeSidebar();
     });
 })();
