@@ -4,7 +4,7 @@
 
 {block head}
 <style>
-    .error-container { min-height: calc(100vh - 4rem - 200px); display: flex; align-items: center; justify-content: center; padding: 0 1.5rem; }
+    .error-container { min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-height) + 1.5rem) 1.5rem 2rem; }
     .error-code { font-size: 8rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .error-title { font-size: 1.5rem; font-weight: 600; color: var(--text-bright); margin-top: 0.5rem; }
     .error-message { color: var(--text); margin: 0.75rem auto 0; max-width: 28rem; }
@@ -20,13 +20,14 @@
 {/block}
 
 {block content}
-<div class="error-container">
+<main class="error-container">
     <div class="text-center">
         <div class="error-code">404</div>
         <h1 class="error-title">{localize('not_found.title')}</h1>
         <p class="error-message">{localize('not_found.message')}</p>
         <div class="error-links">
             <a href="{$leafBaseUrl}{$localePrefix}/" class="error-link-primary">{localize('not_found.home')}</a>
+            <a n:if="$firstPage ?? null" href="{$leafBaseUrl}{$localePrefix}/{$firstPage['section']}/{$firstPage['slug']}/" class="error-link-secondary">{localize('not_found.docs')}</a>
         </div>
         <nav n:if="count($supportedLocales) > 1" class="error-locales" aria-label="{localize('not_found.other_languages')}">
             {foreach $supportedLocales as $loc}
@@ -34,5 +35,5 @@
             {/foreach}
         </nav>
     </div>
-</div>
+</main>
 {/block}

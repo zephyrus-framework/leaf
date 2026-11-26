@@ -9,7 +9,7 @@ const LOCALES = ['en', 'fr'];
 const SLUGS = ['introduction', 'writing-content', 'deployment'];
 const FR_MARKER = 'Marqueur-francais-0451';
 const AUTHOR_LINKS = "\n[doc](/getting-started/deployment/) [home](/) [asset](/assets/css/app.css)\n";
-const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary';
+const THEME_LINKS = '.nav-logo, .sidebar-link, .pagination-link, .error-link-primary, .error-link-secondary';
 
 main();
 
@@ -293,6 +293,7 @@ function checkThemeElements(Report $report, string $page, DOMDocument $dom): voi
     }
     if (in_array($page, ['404.html', 'fr/404.html'], true)) {
         $required[] = '.error-link-primary';
+        $required[] = '.error-link-secondary';
     }
     foreach ($required as $selector) {
         if (cssQuery($dom, $selector) === []) {
