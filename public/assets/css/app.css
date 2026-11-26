@@ -241,6 +241,34 @@ code[class*="language-"] {
 .text-accent { color: var(--accent); }
 .border-border { border-color: var(--border); }
 
+/* ── Skip Link ────────────────────────────────────────────── */
+.skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 60;
+    padding: 0.625rem 1rem;
+    background: var(--accent-fill);
+    border-radius: 0.5rem;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transform: translateY(calc(-100% - 1rem));
+}
+.skip-link:hover {
+    color: #fff;
+}
+.skip-link:focus {
+    transform: none;
+    outline: 2px solid var(--text-bright);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--bg-deep);
+}
+#main-content:focus {
+    outline: none;
+}
+
 /* ── Navigation ───────────────────────────────────────────── */
 .site-nav {
     position: fixed;

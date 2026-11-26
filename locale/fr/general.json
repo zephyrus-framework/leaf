@@ -1,6 +1,7 @@
 {
   "nav": {
     "label": "Site",
+    "skip": "Aller au contenu",
     "menu": "Afficher ou masquer le menu",
     "search": "Rechercher",
     "theme": "Changer de thème",

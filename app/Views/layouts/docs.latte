@@ -5,12 +5,13 @@
     {block head}{/block}
 </head>
 <body class="bg-deep text-body antialiased font-body">
+    <a class="skip-link" href="#main-content">{localize('nav.skip')}</a>
     {include '../partials/nav.latte', docsMode: true}
 
     <div class="docs-layout">
         <div class="sidebar-overlay" onclick="closeSidebar()"></div>
         {include '../partials/sidebar.latte'}
-        <main class="docs-main">
+        <main id="main-content" class="docs-main" tabindex="-1">
             {block content}{/block}
         </main>
         {include '../partials/toc.latte'}

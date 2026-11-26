@@ -1,6 +1,7 @@
 {
   "nav": {
     "label": "Site",
+    "skip": "Skip to content",
     "menu": "Toggle menu",
     "search": "Search",
     "theme": "Toggle theme",
