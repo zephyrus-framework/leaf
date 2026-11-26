@@ -35,9 +35,24 @@
         overlay.classList.remove('active');
         activeIndex = -1;
         input.blur();
-        if (returnFocusTo) returnFocusTo.focus();
+        restoreFocus(returnFocusTo);
         returnFocusTo = null;
     };
+
+    // A return point that can no longer take focus (a menu closed meanwhile) hands it to the control of its
+    // collapsed container (aria-controls), else to the search button.
+    function restoreFocus(target) {
+        if (!target) return;
+        target.focus();
+        if (document.activeElement === target) return;
+        for (var node = target.parentElement; node; node = node.parentElement) {
+            var control = node.id ? document.querySelector('[aria-controls~="' + CSS.escape(node.id) + '"]') : null;
+            if (control) control.focus();
+            if (control && document.activeElement === control) return;
+        }
+        var trigger = document.querySelector('.search-trigger');
+        if (trigger) trigger.focus();
+    }
 
     // ── Keyboard shortcuts ─────────────────────────────────────
     document.addEventListener('keydown', function (e) {
