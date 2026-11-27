@@ -2,9 +2,10 @@
  * Client-side search of the site's pages.
  *
  * On first open, and on the next one after a failure, loads the index named by the leaf-search-url meta tag (the
- * search.json of the page's locale), then ranks titles, headings and the page text as you type. The first result is
- * preselected: Enter opens it, the up and down arrows move through the results, Escape closes. The field is an ARIA
- * combobox that keeps the focus and names the selected option of the results listbox in aria-activedescendant.
+ * search.json of the page's locale), then ranks titles, headings and the page text as you type. When there are
+ * results, the first one is preselected: Enter opens it, the up and down arrows move through the results, Escape
+ * closes. The field is an ARIA combobox that keeps the focus and names the selected option of the results listbox in
+ * aria-activedescendant.
  */
 (function () {
     'use strict';
