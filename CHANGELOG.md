@@ -2,7 +2,7 @@
 
 Notable changes to the Leaf theme and project template. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows [semantic versioning](https://semver.org/).
 
-## [1.0.0] - Unreleased
+## [1.0.0] - 2026-11-26
 
 First stable release: nothing breaks before 2.0. What is public, and what is not, is on [Versioning and stability](https://leaf.ophelios.com/getting-started/versioning/).
 
@@ -60,3 +60,5 @@ A template, stylesheet or script your site overrides belongs to your site. Take 
 ## Earlier versions
 
 The 0.1.x releases are described on [GitHub](https://github.com/zephyrus-framework/leaf/releases).
+
+[1.0.0]: https://github.com/zephyrus-framework/leaf/compare/v0.1.12...v1.0.0
